@@ -1,5 +1,4 @@
-﻿@
-export default function Profile() {
+﻿export default function Profile() {
   return (
     <div className='p-6'>
       <h1 className='text-xl font-headline font-bold text-on-surface'>Profile</h1>
@@ -7,4 +6,3 @@ export default function Profile() {
     </div>
   )
 }
-

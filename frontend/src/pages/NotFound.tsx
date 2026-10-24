@@ -1,5 +1,4 @@
-﻿@
-export default function NotFound() {
+﻿export default function NotFound() {
   return (
     <div className='p-6'>
       <h1 className='text-xl font-headline font-bold text-on-surface'>NotFound</h1>
@@ -7,4 +6,3 @@ export default function NotFound() {
     </div>
   )
 }
-

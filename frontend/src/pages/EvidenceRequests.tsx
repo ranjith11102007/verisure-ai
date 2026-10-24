@@ -1,5 +1,4 @@
-﻿@
-export default function EvidenceRequests() {
+﻿export default function EvidenceRequests() {
   return (
     <div className='p-6'>
       <h1 className='text-xl font-headline font-bold text-on-surface'>EvidenceRequests</h1>
@@ -7,4 +6,3 @@ export default function EvidenceRequests() {
     </div>
   )
 }
-

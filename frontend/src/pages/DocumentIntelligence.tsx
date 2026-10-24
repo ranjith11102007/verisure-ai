@@ -1,5 +1,4 @@
-﻿@
-export default function DocumentIntelligence() {
+﻿export default function DocumentIntelligence() {
   return (
     <div className='p-6'>
       <h1 className='text-xl font-headline font-bold text-on-surface'>DocumentIntelligence</h1>
@@ -7,4 +6,3 @@ export default function DocumentIntelligence() {
     </div>
   )
 }
-

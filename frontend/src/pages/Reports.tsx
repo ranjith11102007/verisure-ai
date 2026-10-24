@@ -1,5 +1,4 @@
-﻿@
-export default function Reports() {
+﻿export default function Reports() {
   return (
     <div className='p-6'>
       <h1 className='text-xl font-headline font-bold text-on-surface'>Reports</h1>
@@ -7,4 +6,3 @@ export default function Reports() {
     </div>
   )
 }
-
