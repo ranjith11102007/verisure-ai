@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary":"#ffffff","on-tertiary-fixed-variant":"#3f465c","surface-container-high":"#dce9ff","primary-fixed":"#dbe1ff","surface-tint":"#0053db","on-surface":"#0b1c30","on-secondary-container":"#006f66","surface-container":"#e5eeff","background":"#f8f9ff","on-secondary-fixed-variant":"#005049","on-secondary-fixed":"#00201d","secondary":"#006a61","inverse-on-surface":"#eaf1ff","on-primary":"#ffffff","error":"#ba1a1a","outline-variant":"#c3c6d7","on-tertiary":"#ffffff","inverse-primary":"#b4c5ff","primary-container":"#2563eb","surface-bright":"#f8f9ff","surface-container-low":"#eff4ff","on-primary-fixed-variant":"#003ea8","secondary-container":"#86f2e4","on-error-container":"#93000a","error-container":"#ffdad6","tertiary-fixed":"#dae2fd","surface-dim":"#cbdbf5","primary-fixed-dim":"#b4c5ff","primary":"#004ac6","secondary-fixed-dim":"#6bd8cb","surface-variant":"#d3e4fe","on-primary-container":"#eeefff","secondary-fixed":"#89f5e7","on-tertiary-container":"#eef0ff","surface-container-highest":"#d3e4fe","surface-container-lowest":"#ffffff","tertiary-container":"#656d84","inverse-surface":"#213145","outline":"#737686","tertiary-fixed-dim":"#bec6e0","surface":"#f8f9ff","on-tertiary-fixed":"#131b2e","on-error":"#ffffff","on-primary-fixed":"#00174b","on-background":"#0b1c30","tertiary":"#4d556b","on-surface-variant":"#434655"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"space-sm":"0.5rem",gutter:"1rem","space-xl":"1.5rem",margin:"1rem","space-md":"0.75rem","space-xs":"0.25rem","margin-desktop":"1.5rem","gutter-desktop":"1.25rem","space-lg":"1rem"},fontFamily:{"body-md":["Inter"],"label-md":["Inter"],"code-tabular":["JetBrains Mono"],"headline-md":["Plus Jakarta Sans"],"body-sm":["Inter"],"headline-xl-mobile":["Plus Jakarta Sans"],"body-lg":["Inter"],"headline-sm":["Plus Jakarta Sans"],"label-sm":["Inter"],"headline-xl":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"]},fontSize:{"body-md":["13px",{lineHeight:"18px",fontWeight:"400"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"600"}],"code-tabular":["12px",{lineHeight:"16px",letterSpacing:"-0.01em",fontWeight:"500"}],"headline-md":["18px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",fontWeight:"400"}],"headline-xl-mobile":["22px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"700"}],"body-lg":["15px",{lineHeight:"22px",fontWeight:"400"}],"headline-sm":["15px",{lineHeight:"20px",letterSpacing:"-0.005em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"600"}],"headline-xl":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-lg":["22px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-inverse-surface z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.06)]"><div class="flex flex-col"><div class="h-16 flex items-center gap-space-md px-space-lg bg-inverse-surface"><img alt="VeriSure AI Brand Mark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XrsOtx3rzkdJOWVTipf00nks4GpwAxtpq4lupsWjA7-CWf3lVAjfOh4MGAIzOrmtm_9vFGRt1jnvQBdWTkbIxO23ZLoc2aWfjaSVpZyEDOaH-5PprPRpOF-fq6HvHzNxoq51OB5qNU7QEKNW-P25IAeW229_zEitWaijC-U0Vl7mQQfCIY-RJC8BR_nn8d4KdjfPyW-N76ofWRbT_IbB4nj9piVWf7O7jrxgOmuxI"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-inverse-on-surface tracking-tight leading-none">VeriSure AI</span><span class="font-label-sm text-[10px] text-tertiary-fixed-dim uppercase tracking-wider mt-0.5">Regulatory RegTech Engine</span></div></div><div class="px-space-md py-space-sm"><div class="px-space-sm py-space-xs font-label-sm text-label-sm uppercase tracking-wider text-outline-variant">Platform Navigation</div></div><nav class="flex flex-col gap-0.5 px-space-md" data-active-classes="bg-primary-container text-on-primary font-bold"><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span></a><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="applications" href="#"><span class="material-symbols-outlined text-[18px]">assignment</span><span>Applications</span></a><a aria-current="page" class="flex items-center gap-space-md px-space-sm py-2 rounded-lg transition-colors bg-primary-container text-on-primary font-bold" data-path="document-intelligence" href="#"><span class="material-symbols-outlined text-[18px]">document_scanner</span><span>Document Intelligence</span></a><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="authentication-center" href="#"><span class="material-symbols-outlined text-[18px]">verified_user</span><span>Authentication Center</span></a><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="compliance-review" href="#"><span class="material-symbols-outlined text-[18px]">policy</span><span>Compliance Review</span></a><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="findings-center" href="#"><span class="material-symbols-outlined text-[18px]">report_problem</span><span>Findings Center</span></a><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="rules-engine" href="#"><span class="material-symbols-outlined text-[18px]">rule</span><span>Rules Engine</span></a><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="evidence-requests" href="#"><span class="material-symbols-outlined text-[18px]">fact_check</span><span>Evidence Requests</span></a><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="audit-log" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span>Audit Log</span></a><a class="flex items-center gap-space-md px-space-sm py-2 rounded-lg font-body-md text-body-md text-tertiary-fixed-dim hover:bg-surface-container-high/10 hover:text-inverse-on-surface transition-colors" data-path="reports-and-analytics" href="#"><span class="material-symbols-outlined text-[18px]">analytics</span><span>Reports &amp; Analytics</span></a></nav></div><div class="p-space-md bg-inverse-surface"><div class="flex items-center justify-between px-space-sm py-space-xs rounded-lg bg-surface-container-high/5"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span><span class="font-code-tabular text-code-tabular text-tertiary-fixed-dim">SEC-NODE: 09</span></div><span class="font-label-sm text-label-sm text-outline-variant font-code-tabular">v4.8.2</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-desktop"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs font-label-md text-label-md text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-tertiary">shield</span><span>Regulatory Compliance</span><span class="text-outline-variant">/</span><span class="text-on-surface font-headline-sm text-headline-sm">Evidentiary Workspace</span></div><div class="h-5 w-[1px] bg-outline-variant/30"></div><div class="relative flex items-center"><span class="material-symbols-outlined text-[18px] text-outline absolute left-3 pointer-events-none">search</span><input class="w-80 h-9 pl-9 pr-space-md bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Search cases, hashes, evidentiary records..." type="text"/></div></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm tracking-wide"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span><span>DEMO / AUDIT SIMULATION</span></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span></button><div class="flex items-center gap-space-md pl-space-sm"><div class="flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-tight">Dr. E. Vance</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Senior Compliance Auditor</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background px-gutter-desktop py-space-xl min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Dossier Meta Ribbon -->
+<div class="w-full bg-surface-container-lowest shadow-sm rounded-xl p-space-lg mb-space-lg flex flex-wrap items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-lg">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">folder_special</span>
+</div>
+<div>
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-md text-headline-md text-on-surface">Apex Institute of Advanced Technology</span>
+<span class="px-2 py-0.5 rounded-lg bg-surface-container-high text-primary font-code-tabular text-[11px] font-semibold">#VSA-2025-0842</span>
+<span class="px-2 py-0.5 rounded-lg bg-surface-container text-tertiary font-label-sm text-label-sm">CAT-A ACCREDITATION</span>
+</div>
+<div class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mt-0.5">
+<span>Target Item: <strong class="text-on-surface font-medium">Land Title Deed &amp; Sub-Registrar Allotment Order</strong></span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Submitted: <strong>14-Oct-2024</strong></span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Assigned: <strong>Dr. E. Vance (Auditor Lead)</strong></span>
+</div>
+</div>
+</div>
+<!-- Quick Navigation Queue Context -->
+<div class="flex items-center gap-space-md">
+<div class="text-right">
+<div class="font-label-sm text-label-sm text-tertiary uppercase">Inspection Progress</div>
+<div class="font-code-tabular text-body-md font-semibold text-on-surface">Doc 02 of 24 in Dossier</div>
+</div>
+<div class="w-24 bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-full w-[8.3%] rounded-full"></div>
+</div>
+<button class="h-9 px-3 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">view_list</span>
+<span>Queue</span>
+</button>
+</div>
+</div>
+<!-- Primary Split-Screen Inspection Studio -->
+<div class="grid grid-cols-12 gap-gutter-desktop items-start">
+<!-- LEFT PANE: 55% Width equivalent (col-span-12 xl:col-span-7) -->
+<section class="col-span-12 xl:col-span-7 flex flex-col gap-space-md">
+<!-- Document Studio Header / Utility Ribbon -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-wrap items-center justify-between gap-space-sm">
+<!-- Viewport Controls -->
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface flex items-center justify-center transition-colors" id="zoomOutBtn" title="Zoom Out">
+<span class="material-symbols-outlined text-[18px]">zoom_out</span>
+</button>
+<span class="font-code-tabular text-body-sm px-2 text-on-surface select-none" id="zoomLevelText">100%</span>
+<button class="w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface flex items-center justify-center transition-colors" id="zoomInBtn" title="Zoom In">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</button>
+<button class="h-8 px-2 rounded-lg bg-surface-container-low hover:bg-surface-container font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface ml-1 transition-colors" id="zoomFitBtn">
+            Fit Width
+          </button>
+<div class="h-4 w-px bg-outline-variant/40 mx-1"></div>
+<button class="w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" id="rotateBtn" title="Rotate Document 90°">
+<span class="material-symbols-outlined text-[18px]">rotate_right</span>
+</button>
+<button class="h-8 px-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm flex items-center gap-1 transition-colors" id="invertScanBtn" title="Toggle High-Contrast Binary Scan">
+<span class="material-symbols-outlined text-[16px]">tonality</span>
+<span>B&amp;W Invert</span>
+</button>
+</div>
+<!-- Annotation & Layer Controls -->
+<div class="flex items-center gap-space-md">
+<label class="flex items-center gap-1.5 cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0" id="bboxToggle" type="checkbox"/>
+<span class="font-label-sm text-label-sm text-on-surface">Bounding Box Layer</span>
+</label>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-1 rounded-lg">
+<button class="text-tertiary hover:text-on-surface"><span class="material-symbols-outlined text-[16px]">chevron_left</span></button>
+<span class="font-code-tabular text-[11px] font-semibold text-on-surface">Pg 3 / 14</span>
+<button class="text-tertiary hover:text-on-surface"><span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Main Document Inspection Stage with Left Filmstrip -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex gap-space-md h-[840px] overflow-hidden relative">
+<!-- Left Thumbnail Strip (Thumbnails 1 through 6 shown, indicating anomalies) -->
+<div class="w-24 flex-shrink-0 flex flex-col gap-space-sm overflow-y-auto pr-1">
+<div class="font-label-sm text-[10px] text-tertiary uppercase tracking-wider mb-0.5">Sheets (14)</div>
+<!-- Thumb 1 -->
+<div class="group relative rounded-lg bg-surface-container-low p-1 cursor-pointer hover:bg-surface-container transition-all">
+<div class="w-full h-24 bg-surface rounded flex flex-col items-center justify-center text-[10px] text-tertiary font-code-tabular relative overflow-hidden">
+<span class="text-[9px]">P. 01</span>
+<span class="material-symbols-outlined text-[18px] text-outline-variant mt-1">description</span>
+<div class="absolute top-1 right-1 w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div class="text-[10px] font-label-sm text-center mt-1 text-on-surface-variant group-hover:text-primary">Cover &amp; Seal</div>
+</div>
+<!-- Thumb 2 -->
+<div class="group relative rounded-lg bg-surface-container-low p-1 cursor-pointer hover:bg-surface-container transition-all">
+<div class="w-full h-24 bg-surface rounded flex flex-col items-center justify-center text-[10px] text-tertiary font-code-tabular relative overflow-hidden">
+<span class="text-[9px]">P. 02</span>
+<span class="material-symbols-outlined text-[18px] text-outline-variant mt-1">description</span>
+<div class="absolute top-1 right-1 w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div class="text-[10px] font-label-sm text-center mt-1 text-on-surface-variant group-hover:text-primary">Recitals</div>
+</div>
+<!-- Thumb 3 (Active Item with Discrepancy Alert) -->
+<div class="group relative rounded-lg bg-surface-container-high p-1 cursor-pointer ring-2 ring-primary transition-all">
+<div class="w-full h-24 bg-surface-container-lowest rounded flex flex-col items-center justify-center text-[10px] font-code-tabular relative overflow-hidden">
+<span class="text-[9px] font-bold text-primary">P. 03</span>
+<span class="material-symbols-outlined text-[20px] text-error mt-0.5">warning</span>
+<div class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-error animate-pulse"></div>
+</div>
+<div class="text-[10px] font-label-sm text-center mt-1 text-error font-bold">Parcel Specs</div>
+</div>
+<!-- Thumb 4 -->
+<div class="group relative rounded-lg bg-surface-container-low p-1 cursor-pointer hover:bg-surface-container transition-all">
+<div class="w-full h-24 bg-surface rounded flex flex-col items-center justify-center text-[10px] text-tertiary font-code-tabular relative overflow-hidden">
+<span class="text-[9px]">P. 04</span>
+<span class="material-symbols-outlined text-[18px] text-outline-variant mt-1">map</span>
+<div class="absolute top-1 right-1 w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div class="text-[10px] font-label-sm text-center mt-1 text-on-surface-variant group-hover:text-primary">Cadastral</div>
+</div>
+<!-- Thumb 5 -->
+<div class="group relative rounded-lg bg-surface-container-low p-1 cursor-pointer hover:bg-surface-container transition-all">
+<div class="w-full h-24 bg-surface rounded flex flex-col items-center justify-center text-[10px] text-tertiary font-code-tabular relative overflow-hidden">
+<span class="text-[9px]">P. 05</span>
+<span class="material-symbols-outlined text-[18px] text-outline-variant mt-1">draw</span>
+</div>
+<div class="text-[10px] font-label-sm text-center mt-1 text-on-surface-variant group-hover:text-primary">Signatures</div>
+</div>
+<!-- Thumb 6 -->
+<div class="group relative rounded-lg bg-surface-container-low p-1 cursor-pointer hover:bg-surface-container transition-all">
+<div class="w-full h-24 bg-surface rounded flex flex-col items-center justify-center text-[10px] text-tertiary font-code-tabular relative overflow-hidden">
+<span class="text-[9px]">P. 06</span>
+<span class="material-symbols-outlined text-[18px] text-outline-variant mt-1">verified</span>
+</div>
+<div class="text-[10px] font-label-sm text-center mt-1 text-on-surface-variant group-hover:text-primary">Attestation</div>
+</div>
+</div>
+<!-- High-Fidelity Canvas Document Viewport -->
+<div class="flex-1 bg-surface-container-low rounded-lg overflow-auto p-space-lg flex justify-center relative select-none" id="viewportContainer">
+<!-- Document Simulation Container -->
+<div class="relative w-[620px] min-h-[920px] bg-surface-container-lowest shadow-xl rounded-sm p-10 flex flex-col text-[#1e293b] font-serif transition-transform duration-150 origin-top" id="documentCanvas">
+<!-- Watermark / Security Print -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.035] select-none">
+<span class="text-7xl font-sans font-bold transform -rotate-45 text-on-surface">GOVERNMENT ALLOTMENT REGISTRY</span>
+</div>
+<!-- Official State Header -->
+<div class="flex items-center justify-between pb-4">
+<div class="flex items-center gap-3">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[32px]">account_balance</span>
+</div>
+<div>
+<div class="text-[12px] font-sans font-bold tracking-widest uppercase text-tertiary">Government of National Capital Territory</div>
+<div class="text-[16px] font-serif font-black tracking-tight text-on-surface">OFFICE OF THE SUB-REGISTRAR (ZONE-IV)</div>
+<div class="text-[10px] font-sans text-outline tracking-wider">REGISTRATION &amp; LAND DISPOSAL DIVISION • FORM 14-A</div>
+</div>
+</div>
+<div class="text-right font-sans">
+<span class="inline-block px-2 py-0.5 rounded bg-surface-container text-tertiary text-[10px] font-bold">ORIGINAL EVIDENTIARY COPY</span>
+<div class="text-[10px] text-outline font-code-tabular mt-1">BARCODE: *88492048201*</div>
+</div>
+</div>
+<!-- Simulated Red Stamp Seal -->
+<div class="relative my-2 p-3 bg-error-container/20 rounded flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-error text-on-error flex items-center justify-center text-[10px] font-sans font-extrabold uppercase text-center leading-tight shadow-sm">
+                  OFFICIAL<br/>STAMP
+                </div>
+<div class="font-sans">
+<div class="text-[11px] font-bold text-on-error-container">REGISTERED UNDER SECTION 17 OF REGISTRATION ACT, 1908</div>
+<div class="text-[10px] text-on-error-container/80">Book No. 1, Volume 1044, Pages 112 to 126 • Registration Fee Assessed &amp; Realized</div>
+</div>
+</div>
+<div class="text-right font-code-tabular text-[11px] font-bold text-error">
+                SR-DEL/48201/2021
+              </div>
+</div>
+<!-- Legal Document Body -->
+<div class="space-y-4 text-[12.5px] leading-relaxed text-on-surface mt-2 font-serif">
+<p class="text-justify indent-8">
+                THIS INDENTURE OF PERPETUAL LEASE made on this <span class="font-sans font-bold">30th Day of August, Two Thousand Twenty-One</span> between the Lieutenant Governor of the Union Territory (hereinafter called the "Lessor") of the ONE PART; and
+              </p>
+<!-- Parsed Bounding Box Target 1: Institution Name -->
+<div class="relative inline-block w-full">
+<p class="text-justify font-serif">
+<span class="font-bold underline">APEX INSTITUTE OF ADVANCED TECHNOLOGY SOCIETY</span>, a registered educational institution registered under the Societies Registration Act XXI of 1860, having its designated administrative premises at Institutional Area, Phase II, Sector 19 (hereinafter referred to as the "Allottee/Lessee").
+                </p>
+<!-- AI Overlay Box 1 (Green/Cyan Verified) -->
+<div class="bbox-layer absolute -inset-1 bg-secondary-container/20 rounded pointer-events-none transition-opacity flex items-start justify-end p-0.5">
+<span class="bg-secondary text-on-secondary font-code-tabular text-[9px] px-1 py-0.2 rounded font-sans font-bold shadow-sm">AI:ENTITY_NAME (98%)</span>
+</div>
+</div>
+<!-- Cadastral Plot Details & Flagged SHORTFALL Box -->
+<div class="relative bg-surface-container-low/40 p-3 rounded">
+<div class="text-[11px] font-sans font-bold uppercase text-tertiary mb-1">Clause 3: Demised Parcel Specifics &amp; Geodetic Demarcation</div>
+<p class="text-justify">
+                  The Lessor hereby demises unto the Lessee all that institutional land plot situated in Khasra No. 34/12 &amp; 35/4, measuring in the aggregate:
+                </p>
+<!-- Parsed Bounding Box Target 2: Land Area (DISCREPANCY ALERT!) -->
+<div class="relative my-2 p-2 bg-surface-container-lowest rounded">
+<div class="font-sans font-bold text-[14px] text-on-surface">
+                    "Total Contiguous Land Parcel: 4.20 Acres (equivalent to 17,000 sq. meters approx.)"
+                  </div>
+<div class="text-[11px] text-outline mt-0.5 font-sans">
+                    Bounded on North by 40-Meter Master Plan Road, on South by Municipal Drainage Buffer, East by Survey Node #881.
+                  </div>
+<!-- AI Highlight Over Document (Red Mismatch Box) -->
+<div class="bbox-layer absolute -inset-1.5 bg-error-container/40 rounded flex items-start justify-between p-1 shadow-sm">
+<span class="bg-error text-on-error font-code-tabular text-[9px] px-1.5 py-0.5 rounded font-sans font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[10px]">error</span>
+                      CRITICAL_DISCREPANCY: -1.30 ACRE SHORTFALL
+                    </span>
+<span class="bg-surface-container-lowest text-error font-code-tabular text-[9px] px-1 py-0.5 rounded font-bold">
+                      OCR: 4.20 AC | APPL: 5.50 AC
+                    </span>
+</div>
+</div>
+</div>
+<!-- Tenure & Encumbrance Clause -->
+<div class="relative">
+<p class="text-justify">
+                  TO HOLD the said demised premises unto the Lessee for a term of <span class="font-sans font-semibold">Ninety-Nine (99) Years</span> commencing from the execution date hereof, rendering therefore the yearly ground rent of INR 100/- payable in advance. The Lessee warrants that the demised parcel shall be maintained free of all statutory charges, private liens, mortgages, and claims of third parties.
+                </p>
+<!-- AI Overlay Box 3 -->
+<div class="bbox-layer absolute -inset-1 bg-secondary-container/15 rounded pointer-events-none flex items-start justify-end p-0.5">
+<span class="bg-secondary text-on-secondary font-code-tabular text-[9px] px-1 rounded font-sans">AI:TENURE_VALIDATED</span>
+</div>
+</div>
+<!-- Survey Boundary Mini-Diagram Block -->
+<div class="mt-4 p-3 bg-surface-container rounded flex items-center justify-between">
+<div class="w-48 h-28 bg-surface-container-lowest rounded flex items-center justify-center p-2 relative">
+<!-- Vector Cadastral Scheme -->
+<svg class="w-full h-full text-outline" fill="none" viewbox="0 0 160 80">
+<polygon fill="rgba(0, 74, 198, 0.04)" points="15,15 145,15 130,70 25,65" stroke="currentColor" stroke-dasharray="2,2" stroke-width="1.5"></polygon>
+<line stroke="#006a61" stroke-width="2" x1="15" x2="145" y1="15" y2="15"></line>
+<text class="text-[8px] font-sans fill-current" x="30" y="38">PL-ZONE: 4.20 AC</text>
+<text class="text-[7px] font-sans fill-current" x="50" y="52">KHASRA 34/12</text>
+<circle cx="15" cy="15" fill="#ba1a1a" r="2.5"></circle>
+<circle cx="145" cy="15" fill="#006a61" r="2.5"></circle>
+<circle cx="130" cy="70" fill="#006a61" r="2.5"></circle>
+<circle cx="25" cy="65" fill="#006a61" r="2.5"></circle>
+</svg>
+</div>
+<div class="font-sans text-[11px] space-y-1 flex-1 pl-4">
+<div class="font-bold text-on-surface">Cadastral Boundary Hash</div>
+<div class="font-code-tabular text-[10px] text-tertiary">GEO-HASH: 7bf8a92e104...c991a</div>
+<div class="text-secondary font-bold text-[10px] flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">verified</span>
+                    Survey Coordinates Georeferenced
+                  </div>
+</div>
+</div>
+<!-- Execution Signature Block -->
+<div class="pt-6 grid grid-cols-2 gap-8 font-sans">
+<div>
+<div class="h-10 border-b border-outline-variant/60 flex items-end">
+<span class="font-serif italic text-[14px] text-on-surface-variant">R. K. Mathur</span>
+</div>
+<div class="text-[10px] font-bold text-on-surface mt-1">SUB-REGISTRAR / DEPUTY COLLECTOR</div>
+<div class="text-[9px] text-outline">Zone-IV, Delhi Administration</div>
+</div>
+<div>
+<div class="h-10 border-b border-outline-variant/60 flex items-end">
+<span class="font-serif italic text-[14px] text-on-surface-variant">Dr. Harsh V. Singhal</span>
+</div>
+<div class="text-[10px] font-bold text-on-surface mt-1">PRESIDENT / APEX SOCIETY</div>
+<div class="text-[9px] text-outline">Authorised Signatory for Allottee</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT PANE: 45% Width equivalent (col-span-12 xl:col-span-5) -->
+<section class="col-span-12 xl:col-span-5 flex flex-col gap-space-md">
+<!-- Extraction Engine Health Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface">OCR Extraction Engine Active</span>
+</div>
+<span class="font-code-tabular text-label-sm text-tertiary">Engine v3.4.2-PROD</span>
+</div>
+<div class="grid grid-cols-3 gap-space-sm bg-surface-container-low rounded-xl p-space-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-[10px] text-tertiary uppercase">Confidence</span>
+<span class="font-headline-md text-headline-md font-bold text-secondary">94.8%</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">High Precision</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-[10px] text-tertiary uppercase">Total Fields</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">18</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">17 Validated</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-[10px] text-tertiary uppercase">Status</span>
+<span class="font-headline-md text-headline-md font-bold text-error">1 Flag</span>
+<span class="font-body-sm text-[11px] text-error font-medium">Critical Shortfall</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span class="font-body-sm text-body-sm">Document Classification:</span>
+<span class="font-label-md text-label-md text-on-surface bg-surface-container px-2 py-0.5 rounded">Perpetual Land Lease Deed</span>
+</div>
+</div>
+<!-- Structured Data & Reviewer Validation Sections -->
+<div class="space-y-space-md">
+<!-- SECTION 1: Institution & Ownership Entity -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">domain</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">1. Entity &amp; Ownership Verification</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-[11px] flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> 100% MATCH
+            </span>
+</div>
+<!-- Field 1.1 -->
+<div class="bg-surface-container-low/50 rounded-lg p-space-md flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-[11px] text-tertiary uppercase">Allottee / Institution Entity Name</span>
+<span class="font-code-tabular text-[11px] text-secondary font-bold">Conf: 98%</span>
+</div>
+<div class="font-body-lg text-body-lg font-semibold text-on-surface">
+              Apex Institute of Advanced Technology Society
+            </div>
+<div class="flex items-center justify-between mt-1 text-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">verified</span>
+                Cross-referenced with Registry Master
+              </span>
+<button class="text-primary hover:underline font-label-sm text-label-sm flex items-center gap-0.5">
+<span>P.1, Para 2</span>
+<span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- Field 1.2 -->
+<div class="bg-surface-container-low/50 rounded-lg p-space-md flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-[11px] text-tertiary uppercase">Sub-Registrar Registration Deed No.</span>
+<span class="font-code-tabular text-[11px] text-secondary font-bold">Conf: 96%</span>
+</div>
+<div class="font-code-tabular text-body-lg font-bold text-on-surface tracking-wide">
+              SR-DEL/48201/2021
+            </div>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>Book 1, Vol 1044, Pages 112-126</span>
+<button class="text-primary hover:underline font-label-sm text-label-sm flex items-center gap-0.5">
+<span>P.3, Seal Block</span>
+<span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+<!-- SECTION 2: Geospatial & Campus Dimension Metrics (THE DISCREPANCY FLAG) -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md p-space-lg flex flex-col gap-space-md ring-2 ring-error/30">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[20px]">square_foot</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">2. Geospatial &amp; Campus Dimension</span>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-error text-on-error font-label-sm text-[11px] font-bold flex items-center gap-1 animate-pulse">
+<span class="material-symbols-outlined text-[14px]">warning</span> DISCREPANCY DETECTED
+            </span>
+</div>
+<!-- Discrepancy Field Card -->
+<div class="bg-error-container/20 rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold text-error uppercase tracking-wider">Metric: Total Contiguous Land Parcel</span>
+<span class="font-code-tabular text-[11px] text-tertiary">OCR Confidence: 99.1%</span>
+</div>
+<!-- Value Comparison Grid -->
+<div class="grid grid-cols-2 gap-space-sm mt-1">
+<div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col">
+<span class="font-label-sm text-[10px] text-tertiary uppercase">Declared in Application</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">5.50 Acres</span>
+<span class="font-body-sm text-[11px] text-outline">Self-Certified by Applicant</span>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col ring-1 ring-error">
+<span class="font-label-sm text-[10px] text-error font-bold uppercase">Deed Extracted Value</span>
+<span class="font-headline-md text-headline-md font-bold text-error">4.20 Acres</span>
+<span class="font-code-tabular text-[11px] text-error font-medium">(17,000 sq. meters)</span>
+</div>
+</div>
+<!-- Regulatory Statutory Impact Callout -->
+<div class="p- space-sm rounded-lg bg-surface-container-lowest flex items-start gap-2 mt-1">
+<span class="material-symbols-outlined text-error text-[18px] flex-shrink-0 mt-0.5">report_problem</span>
+<div class="font-body-sm text-[12px] text-on-surface leading-tight">
+<strong class="text-error font-semibold">Mandatory Deficit Alert:</strong> Shortfall of <span class="font-bold text-error">-1.30 Acres</span> detected against Category-A Technical Institute Statutory Minimum (Requires ≥ 5.00 Contiguous Acres).
+              </div>
+</div>
+<!-- Reviewer Override Trigger Button -->
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-outline">Action required to resolve queue</span>
+<button class="h-8 px-3 rounded-lg bg-error hover:bg-error/90 text-on-error font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-all" id="openOverrideModalBtn">
+<span class="material-symbols-outlined text-[16px]">rule</span>
+<span>Reviewer Override / Adjudicate</span>
+</button>
+</div>
+</div>
+</div>
+<!-- SECTION 3: Legal Encumbrances & Validity Period -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">gavel</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">3. Legal Encumbrances &amp; Validity</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-[11px] flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> VERIFIED
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-space-md">
+<div class="bg-surface-container-low/50 rounded-lg p-space-md">
+<div class="font-label-sm text-[10px] text-tertiary uppercase">Lease Tenure</div>
+<div class="font-body-md text-body-md font-bold text-on-surface mt-0.5">99 Years Perpetual</div>
+<div class="font-code-tabular text-[11px] text-secondary mt-1">Expires: 30-Aug-2120</div>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-space-md">
+<div class="font-label-sm text-[10px] text-tertiary uppercase">Non-Encumbrance Status</div>
+<div class="font-body-md text-body-md font-bold text-secondary mt-0.5">Free of Lien</div>
+<div class="font-code-tabular text-[11px] text-tertiary mt-1">Official Seal Confirmed (89%)</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Dock for Auditor Decisions -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-md">
+<div class="font-label-sm text-label-sm text-tertiary uppercase tracking-wider">Auditor Adjudication Actions</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<button class="h-10 px-space-md rounded-lg bg-surface-container text-error hover:bg-error-container/30 font-label-md text-label-md flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[18px]">flag</span>
+<span>Flag Discrepancy</span>
+</button>
+<button class="h-10 px-space-md rounded-lg bg-surface-container text-primary hover:bg-surface-container-high font-label-md text-label-md flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[18px]">mark_email_unread</span>
+<span>Request Clarification</span>
+</button>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="flex-1 h-11 px-space-lg rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Confirm Extracted Values &amp; Pass</span>
+</button>
+<button class="h-11 px-space-md rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md flex items-center gap-1 transition-colors" title="Proceed to Document 3">
+<span>Next</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+<!-- Statutory Notice Footer -->
+<div class="flex items-center gap-2 pt-1 text-on-surface-variant font-body-sm text-[11px]">
+<span class="material-symbols-outlined text-[14px] text-tertiary">lock</span>
+<span>Regulatory Notice: Corrections are cryptographically logged with Auditor ID <strong class="text-on-surface">DR-EV-9402</strong> into permanent audit trail ledger.</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Reviewer Override Modal Dialog (Toggled by Button) -->
+<div class="fixed inset-0 bg-inverse-surface/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" id="overrideModal">
+<div class="bg-surface-container-lowest rounded-xl shadow-2xl max-w-lg w-full p-space-xl flex flex-col gap-space-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[24px]">assignment_late</span>
+<span class="font-headline-md text-headline-md text-on-surface">Land Dimension Discrepancy Adjudication</span>
+</div>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-tertiary flex items-center justify-center" id="closeOverrideModalBtn">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-1 text-body-sm">
+<div class="flex justify-between">
+<span class="text-tertiary">Field Identified:</span>
+<span class="font-bold text-on-surface">Total Contiguous Land Parcel</span>
+</div>
+<div class="flex justify-between">
+<span class="text-tertiary">Parsed Title Deed:</span>
+<span class="font-code-tabular font-bold text-error">4.20 Acres (17,000 sq.m)</span>
+</div>
+<div class="flex justify-between">
+<span class="text-tertiary">Application Declaration:</span>
+<span class="font-code-tabular font-bold text-on-surface">5.50 Acres</span>
+</div>
+</div>
+<!-- Action Choice -->
+<div class="space-y-space-sm">
+<label class="font-label-sm text-label-sm text-on-surface uppercase">Select Official Regulatory Disposition</label>
+<label class="flex items-start gap-space-md p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high cursor-pointer transition-colors">
+<input checked="" class="mt-0.5 text-primary focus:ring-0" name="disposition" type="radio"/>
+<div>
+<div class="font-label-md text-label-md text-on-surface">Confirm Discrepancy &amp; Issue Statutory Notice</div>
+<div class="font-body-sm text-[12px] text-on-surface-variant">Document demonstrates institutional land is under 5.00 acres category threshold.</div>
+</div>
+</label>
+<label class="flex items-start gap-space-md p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high cursor-pointer transition-colors">
+<input class="mt-0.5 text-primary focus:ring-0" name="disposition" type="radio"/>
+<div>
+<div class="font-label-md text-label-md text-on-surface">Issue Evidence Request for Additional Title Deed</div>
+<div class="font-body-sm text-[12px] text-on-surface-variant">Applicant may hold contiguous Phase II lease registered under separate deed.</div>
+</div>
+</label>
+<label class="flex items-start gap-space-md p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high cursor-pointer transition-colors">
+<input class="mt-0.5 text-primary focus:ring-0" name="disposition" type="radio"/>
+<div>
+<div class="font-label-md text-label-md text-on-surface">Manual OCR Value Override</div>
+<div class="font-body-sm text-[12px] text-on-surface-variant">Correct extraction error if typographical reading misclassified metric.</div>
+</div>
+</label>
+</div>
+<!-- Auditor Ledger Comment -->
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface">Auditor Audit Trail Justification Memo (Mandatory)</label>
+<textarea class="w-full bg-surface-container-low rounded-lg p-2.5 font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Enter formal justification note to be affixed to audit record..." rows="3"></textarea>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-end gap-space-md pt-2">
+<button class="h-9 px-space-md rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md" id="cancelModalBtn">
+          Cancel
+        </button>
+<button class="h-9 px-space-lg rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm" id="commitModalBtn">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<span>Commit Audit Ledger Entry</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive Studio Script for Zoom, Rotation, Invert & Bounding Boxes -->
+<script>
+    (function initDocumentIntelligenceStudio() {
+      let currentScale = 1.0;
+      let currentRotation = 0;
+      let isInverted = false;
+      let showBoxes = true;
+
+      const docCanvas = document.getElementById('documentCanvas');
+      const zoomText = document.getElementById('zoomLevelText');
+      const zoomIn = document.getElementById('zoomInBtn');
+      const zoomOut = document.getElementById('zoomOutBtn');
+      const zoomFit = document.getElementById('zoomFitBtn');
+      const rotate = document.getElementById('rotateBtn');
+      const invertBtn = document.getElementById('invertScanBtn');
+      const bboxToggle = document.getElementById('bboxToggle');
+      const bboxElements = document.querySelectorAll('.bbox-layer');
+
+      const modal = document.getElementById('overrideModal');
+      const openModalBtn = document.getElementById('openOverrideModalBtn');
+      const closeModalBtn = document.getElementById('closeOverrideModalBtn');
+      const cancelModalBtn = document.getElementById('cancelModalBtn');
+      const commitModalBtn = document.getElementById('commitModalBtn');
+
+      function updateDocTransform() {
+        if (!docCanvas) return;
+        docCanvas.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
+        if (zoomText) {
+          zoomText.textContent = `${Math.round(currentScale * 100)}%`;
+        }
+      }
+
+      if (zoomIn) {
+        zoomIn.addEventListener('click', () => {
+          if (currentScale < 1.8) {
+            currentScale += 0.15;
+            updateDocTransform();
+          }
+        });
+      }
+
+      if (zoomOut) {
+        zoomOut.addEventListener('click', () => {
+          if (currentScale > 0.6) {
+            currentScale -= 0.15;
+            updateDocTransform();
+          }
+        });
+      }
+
+      if (zoomFit) {
+        zoomFit.addEventListener('click', () => {
+          currentScale = 1.0;
+          currentRotation = 0;
+          updateDocTransform();
+        });
+      }
+
+      if (rotate) {
+        rotate.addEventListener('click', () => {
+          currentRotation = (currentRotation + 90) % 360;
+          updateDocTransform();
+        });
+      }
+
+      if (invertBtn) {
+        invertBtn.addEventListener('click', () => {
+          isInverted = !isInverted;
+          if (isInverted) {
+            docCanvas.classList.add('invert', 'contrast-125');
+            invertBtn.classList.add('bg-inverse-surface', 'text-inverse-on-surface');
+          } else {
+            docCanvas.classList.remove('invert', 'contrast-125');
+            invertBtn.classList.remove('bg-inverse-surface', 'text-inverse-on-surface');
+          }
+        });
+      }
+
+      if (bboxToggle) {
+        bboxToggle.addEventListener('change', (e) => {
+          showBoxes = e.target.checked;
+          bboxElements.forEach(box => {
+            box.style.display = showBoxes ? 'flex' : 'none';
+          });
+        });
+      }
+
+      function openModal() {
+        if (modal) modal.classList.remove('hidden');
+      }
+
+      function closeModal() {
+        if (modal) modal.classList.add('hidden');
+      }
+
+      if (openModalBtn) openModalBtn.addEventListener('click', openModal);
+      if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+      if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
+      if (commitModalBtn) {
+        commitModalBtn.addEventListener('click', () => {
+          closeModal();
+          alert('Disposition recorded in cryptographic audit ledger under Auditor Vance (ID: DR-EV-9402).');
+        });
+      }
+    })();
+  </script>
+</div></main></div></body></html>
