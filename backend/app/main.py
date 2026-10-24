@@ -4,6 +4,10 @@ from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.api.v1 import api_router
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -14,6 +18,7 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
 )
 
+# CORS - driven by environment variables
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins_list,
@@ -24,12 +29,19 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api/v1")
 
-# Mount uploads directory (outside web root conceptually, but serve securely)
+# Ensure uploads directory exists (ephemeral on free hosts)
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_DIR, "documents"), exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_DIR, "temp"), exist_ok=True)
+logger.warning("File uploads use ephemeral storage on this host - files may be lost on restart.")
+
+# Mount uploads directory if exists
 if os.path.exists(settings.UPLOAD_DIR):
     app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 
 @app.get("/api/health")
+@app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": settings.APP_NAME, "version": "1.0.0"}
 

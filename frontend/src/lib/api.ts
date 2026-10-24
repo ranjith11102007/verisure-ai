@@ -1,7 +1,13 @@
 import axios from 'axios'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+
+if (!API_BASE_URL) {
+  console.error('VITE_API_BASE_URL is not set. API calls will fail.')
+}
+
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api/v1',
+  baseURL: `${API_BASE_URL}/api/v1`,
   headers: {
     'Content-Type': 'application/json',
   },
