@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
+import { AuthGuard } from './components/AuthGuard'
 import Dashboard from './pages/Dashboard'
 import Applications from './pages/Applications'
 import ApplicationDetail from './pages/ApplicationDetail'
@@ -24,7 +25,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<AppShell />}>
+        <Route path="/" element={<AuthGuard><AppShell /></AuthGuard>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="applications" element={<Applications />} />

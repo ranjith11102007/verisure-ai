@@ -1,6 +1,34 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { authApi } from '../../lib/api'
 
 export default function Register() {
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters')
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await authApi.register(email, password, fullName)
+      localStorage.setItem('token', res.data.access_token)
+      navigate('/dashboard')
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Registration failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 p-8">
@@ -11,20 +39,22 @@ export default function Register() {
           <h1 className="text-xl font-headline font-bold text-on-surface">Create Account</h1>
           <p className="text-sm text-on-surface-variant mt-1">Register for VeriSure AI</p>
         </div>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-on-surface mb-1">Full Name</label>
-            <input type="text" className="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
+            <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required className="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-on-surface mb-1">Email</label>
-            <input type="email" className="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-on-surface mb-1">Password</label>
-            <input type="password" className="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} className="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
+            <p className="text-xs text-on-surface-variant mt-1">Minimum 8 characters</p>
           </div>
-          <button type="submit" className="w-full h-9 rounded bg-primary hover:bg-primary-container text-on-primary text-sm font-medium">Register</button>
+          {error && <div className="text-sm text-error">{error}</div>}
+          <button type="submit" disabled={loading} className="w-full h-9 rounded bg-primary hover:bg-primary-container disabled:opacity-50 text-on-primary text-sm font-medium">{loading ? 'Creating account...' : 'Register'}</button>
         </form>
         <p className="text-center text-sm text-on-surface-variant mt-6">
           Already have an account? <Link to="/login" className="text-primary hover:underline">Sign In</Link>

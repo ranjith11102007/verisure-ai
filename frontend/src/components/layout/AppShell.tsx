@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from 'react-router-dom'
+import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 const navItems = [
@@ -18,6 +18,12 @@ const navItems = [
 
 export function AppShell() {
   const [collapsed, setCollapsed] = useState(false)
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    navigate('/login')
+  }
 
   return (
     <div className="min-h-screen bg-surface">
@@ -46,7 +52,11 @@ export function AppShell() {
             </NavLink>
           ))}
         </nav>
-        <div className="border-t border-[#334155] p-2">
+        <div className="border-t border-[#334155] p-2 space-y-1">
+          <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-1.5 text-[#CBD5E1] hover:text-white hover:bg-[#1E293B] rounded">
+            <span className="material-symbols-outlined text-[18px]">logout</span>
+            {!collapsed && <span className="text-[13px]">Logout</span>}
+          </button>
           <button onClick={() => setCollapsed(!collapsed)} className="w-full flex items-center justify-center py-1.5 text-[#CBD5E1] hover:text-white hover:bg-[#1E293B] rounded">
             <span className="material-symbols-outlined text-[18px]">{collapsed ? 'chevron_right' : 'chevron_left'}</span>
           </button>
