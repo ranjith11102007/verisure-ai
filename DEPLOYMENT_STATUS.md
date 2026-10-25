@@ -4,10 +4,49 @@
 
 | Component | URL | Status |
 | --- | --- | --- |
-| Frontend (Vercel) | https://verisure-ai.vercel.app | Live |
-| Backend API (Render) | https://verisure-backend-m1rb.onrender.com | Live |
+| Frontend (Vercel) | https://verisure-ai.vercel.app | Live, latest build |
+| Backend API (Render) | https://verisure-backend-m1rb.onrender.com | Live, latest build |
 | API docs | https://verisure-backend-m1rb.onrender.com/api/docs | Live |
-| Database | Neon PostgreSQL (project `verisure-db`) | Live, 13 tables |
+| Database | Local SQLite on Render (**PostgreSQL not yet configured**) | Working, temporary |
+
+## Live verification (2026-10-25)
+
+Executed against the deployed services, not just locally:
+
+- `GET /api/health` → `200`
+- `GET /api/health/db` → `backend: sqlite`, `connected: true`, 12 tables
+- `backend/live_test.py` against Render → **30/30 pass**
+  - register, login, profile, dashboard aggregates
+  - create application, upload + SHA-256 verify, submit
+  - compliance run + findings, evidence request + response
+  - admin review, approve, audit trail
+  - CORS preflight from `https://verisure-ai.vercel.app`
+- Vercel `/api/health/db` → proxied to Render successfully
+- Vercel `/applications/abc` → `200` (SPA deep-link fallback)
+- Vercel `/login` → `200`
+- Production frontend build → no TypeScript errors
+
+## Outstanding configuration (2 settings on Render)
+
+The backend currently reports `configured_url_present: false`, so it is running
+on its **temporary SQLite fallback**. Data is lost when the free Render instance
+restarts or redeploys. To finish the deployment, set these in
+**Render → verisure-backend → Environment**:
+
+| Key | Value |
+| --- | --- |
+| `DATABASE_URL` | your Neon pooled URL (`postgresql://…?sslmode=require`) |
+| `ADMIN_PASSWORD` | the administrator password you want to use |
+
+Saving these triggers a restart. The startup hook will connect to PostgreSQL,
+reuse the existing tables, and (because `ADMIN_PASSWORD` changed from the default)
+update the administrator password. Verify with:
+
+```
+GET https://verisure-backend-m1rb.onrender.com/api/health/db
+```
+
+Expected: `"backend": "postgresql"`, `"is_fallback": false`, `"table_count": 13`.
 
 ## What works
 
@@ -91,8 +130,11 @@ The schema is created in two ways:
 
 | Role | Email | Password |
 | --- | --- | --- |
-| Admin | `admin@verisure.local` | set via `ADMIN_PASSWORD` on Render (`AdminVeriSure@2026` in dev) |
+| Admin | `admin@verisure.local` | whatever `ADMIN_PASSWORD` is set to on Render (default placeholder: `change-this-password`) |
 | Applicant | register any new account from `/register` | — |
+
+Set `ADMIN_PASSWORD` before sharing the demo link; the default placeholder is
+publicly guessable.
 
 ## Known limitations (free-tier constraints)
 
