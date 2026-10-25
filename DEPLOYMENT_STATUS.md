@@ -69,6 +69,11 @@ Test results at time of writing:
 - `backend/smoke_test.py` — 26/26 pass (TestClient against Neon)
 - `backend/live_test.py` — 30/30 pass against **PostgreSQL** (13 tables, `is_fallback: false`)
 - `backend/live_test.py` — 30/30 pass against the **SQLite fallback**
+- `backend/live_test.py` — 30/30 pass against the **live Render backend**
+- `backend/browser_test.mjs` — 29/29 checks in a real headless browser against the live
+  Vercel site: landing, login, dashboard metrics, registry, the create-application form,
+  compliance, settings, every remaining authenticated route, 404 page, deep links, the
+  sign-out guard, and zero uncaught JavaScript errors
 - `frontend` production build — no TypeScript errors
 
 ## Required environment variables
@@ -135,6 +140,10 @@ The schema is created in two ways:
 
 Set `ADMIN_PASSWORD` before sharing the demo link; the default placeholder is
 publicly guessable.
+
+The Neon database has been reset to a clean demo state: one administrator account,
+the four seeded compliance rules, and no test applications. Test runs can be removed
+again by deleting the generated rows and restarting the service.
 
 ## Known limitations (free-tier constraints)
 
