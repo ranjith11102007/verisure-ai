@@ -187,3 +187,33 @@ $env:DATABASE_URL="postgresql://..."
 - [x] Audit trail records actions
 - [x] CORS allows the Vercel origin and Vercel preview domains
 - [x] No credentials committed to the repository
+- [x] Malformed identifiers return 404 (never an unhandled 500)
+- [x] Deployed SPA verified in a real browser (landing, login, dashboard,
+      registry, compliance, settings, deep links, logout guard)
+
+## Submission checklist
+
+Before submitting to the hackathon, confirm two Render settings on the
+`verisure-backend` service (Environment tab):
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `DATABASE_URL` | Neon pooled connection string. Without it the backend falls back to ephemeral SQLite and data resets on every restart. | `postgresql://user:pass@ep-pooler.region.aws.neon.tech/neondb?sslmode=require` |
+| `ADMIN_PASSWORD` | Password for `admin@verisure.local`. Set anything other than the repository default so the reviewer account is not guessable. | a long random string |
+
+Saving either variable restarts the service automatically. After the restart,
+`GET /api/health/db` should report `"backend": "postgresql"` and
+`"is_fallback": false`.
+
+### Suggested demo script
+
+1. Open the landing page and explain the three pillars: document
+   authentication (SHA-256), automated compliance rules, immutable audit.
+2. Register a new applicant account, create an application, upload a PDF or
+   image, then submit it for review. Show the SHA-256 fingerprint and the
+   verification result.
+3. Run the compliance engine and point out the findings it raises.
+4. Sign in as the administrator, move the application through review, request
+   evidence, and approve it.
+5. Show the dashboard metrics and the audit trail, then return to the
+   applicant view to show the decision.
