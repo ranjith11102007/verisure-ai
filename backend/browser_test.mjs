@@ -105,10 +105,11 @@ async function main() {
 
   const waitForText = async (needle, timeoutMs = 25000) => {
     const deadline = Date.now() + timeoutMs;
+    const pattern = needle instanceof RegExp ? needle : new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
     let text = "";
     while (Date.now() < deadline) {
       text = await evaluate("document.body.innerText");
-      if (text.includes(needle)) return text;
+      if (pattern.test(text)) return text;
       await sleep(750);
     }
     return text;
@@ -145,15 +146,69 @@ async function main() {
 
     if (token) {
       await navigate(`${BASE}/dashboard`);
-      text = await waitForText("Total Submissions");
+      text = await waitForText(/total submissions/i);
       check("dashboard renders", text.includes("Executive Regulatory Oversight"), text.slice(0, 90).replace(/\n/g, " "));
-      check("dashboard shows metrics", text.includes("Total Submissions"));
+      check("dashboard shows metrics", /total submissions/i.test(text));
+      check(
+        "dashboard metrics populated",
+        /TOTAL SUBMISSIONS[\s\S]{0,60}?\d/i.test(text),
+        (text.match(/TOTAL SUBMISSIONS[\s\S]{0,40}/i) || [""])[0].replace(/\n/g, " ")
+      );
       check("sidebar identity loaded", text.includes("admin@verisure.local") || text.includes("Administrator"));
 
       await navigate(`${BASE}/applications`);
       text = await waitForText("Institutional Applications Registry");
       check("applications registry renders", text.includes("Institutional Applications Registry"));
-      check("registry has create action", text.includes("New Application") || text.includes("Create"));
+      check("registry has create action", /new .*application|create/i.test(text));
+
+      // Create an application through the real UI form.
+      const orgName = `Browser Test Institute ${Date.now().toString().slice(-6)}`;
+      const opened = await evaluate(`(() => {
+        const btn = Array.from(document.querySelectorAll('button'))
+          .find((b) => /new institutional application/i.test(b.textContent || ''));
+        if (!btn) return false;
+        btn.click();
+        return true;
+      })()`);
+      check("create dialog opens", opened);
+      await sleep(600);
+
+      const filled = await evaluate(`(() => {
+        const setValue = (el, value) => {
+          const proto = el instanceof HTMLSelectElement
+            ? window.HTMLSelectElement.prototype
+            : window.HTMLInputElement.prototype;
+          const setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
+          setter.call(el, value);
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+        const form = document.querySelector('form');
+        if (!form) return { ok: false, reason: 'no form' };
+        const inputs = Array.from(form.querySelectorAll('input'));
+        const select = form.querySelector('select');
+        if (!select || inputs.length < 3) return { ok: false, reason: 'missing fields' };
+        setValue(inputs[0], ${JSON.stringify(orgName)});
+        setValue(select, 'New Establishment');
+        setValue(inputs[1], 'REG-UI-TEST-001');
+        setValue(inputs[2], 'ui.test@institute.edu');
+        return { ok: true, values: [inputs[0].value, select.value] };
+      })()`);
+      check("create dialog fields accept input", Boolean(filled?.ok), JSON.stringify(filled));
+
+      const submitted = await evaluate(`(() => {
+        const form = document.querySelector('form');
+        if (!form) return false;
+        const btn = Array.from(form.querySelectorAll('button'))
+          .find((b) => /create application/i.test(b.textContent || ''));
+        if (!btn) return false;
+        btn.click();
+        return true;
+      })()`);
+      check("create dialog submits", submitted);
+
+      text = await waitForText(orgName, 30000);
+      check("new application appears in registry", text.includes(orgName), orgName);
 
       await navigate(`${BASE}/compliance`);
       text = await waitForText("Compliance");
@@ -163,6 +218,29 @@ async function main() {
       text = await waitForText("Storage");
       check("settings renders", text.includes("Settings") || text.includes("Preferences"));
       check("settings shows real storage backend", /PostgreSQL|SQLite/.test(text));
+
+      // Remaining authenticated routes must render without crashing.
+      const pages = [
+        ["/reports", "Reports & Analytics"],
+        ["/notifications", "Notifications"],
+        ["/evidence", "Evidence Requests"],
+        ["/document-intelligence", "Document Intelligence"],
+        ["/document-auth", "Document Authentication"],
+        ["/upload", "Document Upload Center"],
+        ["/audit", "Audit History"],
+        ["/rules", "Rules Engine"],
+        ["/profile", "Profile"],
+      ];
+      for (const [path, heading] of pages) {
+        await navigate(`${BASE}${path}`);
+        text = await waitForText(heading, 20000);
+        check(`${path} renders`, text.includes(heading), text.slice(0, 60).replace(/\n/g, " "));
+      }
+
+      // 404 route
+      await navigate(`${BASE}/this-page-does-not-exist`);
+      text = await waitForText(/404|not found/i, 15000);
+      check("unknown route shows 404 page", /404|not found/i.test(text));
 
       // Deep-link refresh while authenticated
       await navigate(`${BASE}/applications/does-not-exist`);
