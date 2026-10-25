@@ -1,10 +1,11 @@
 from sqlalchemy import Column, String, DateTime, Enum as SQLEnum, ForeignKey, Text, Boolean, Integer
-from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy import Uuid, JSON
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 import uuid
 from datetime import datetime
 import enum
+from app.models.types import CoercingUuid
 
 
 class Severity(str, enum.Enum):
@@ -24,7 +25,7 @@ class FindingDisposition(str, enum.Enum):
 class ComplianceRule(Base):
     __tablename__ = "compliance_rules"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(CoercingUuid(), primary_key=True, default=uuid.uuid4)
     rule_code = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)
@@ -37,7 +38,7 @@ class ComplianceRule(Base):
     effective_from = Column(DateTime, default=datetime.utcnow)
     source_ref = Column(String, nullable=True)
     evidence_reference = Column(Text, nullable=True)
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    created_by = Column(CoercingUuid(), ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -47,9 +48,9 @@ class ComplianceRule(Base):
 class ComplianceRun(Base):
     __tablename__ = "compliance_runs"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    application_id = Column(UUID(as_uuid=True), ForeignKey("applications.id"), nullable=False)
-    triggered_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    id = Column(CoercingUuid(), primary_key=True, default=uuid.uuid4)
+    application_id = Column(CoercingUuid(), ForeignKey("applications.id"), nullable=False)
+    triggered_by = Column(CoercingUuid(), ForeignKey("users.id"), nullable=True)
     rule_set_version = Column(String, nullable=True)
     status = Column(String, default="completed")
     executed_at = Column(DateTime, default=datetime.utcnow)
@@ -61,17 +62,17 @@ class ComplianceRun(Base):
 class ComplianceFinding(Base):
     __tablename__ = "compliance_findings"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    run_id = Column(UUID(as_uuid=True), ForeignKey("compliance_runs.id"), nullable=False)
-    rule_id = Column(UUID(as_uuid=True), ForeignKey("compliance_rules.id"), nullable=False)
-    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"), nullable=True)
+    id = Column(CoercingUuid(), primary_key=True, default=uuid.uuid4)
+    run_id = Column(CoercingUuid(), ForeignKey("compliance_runs.id"), nullable=False)
+    rule_id = Column(CoercingUuid(), ForeignKey("compliance_rules.id"), nullable=False)
+    document_id = Column(CoercingUuid(), ForeignKey("documents.id"), nullable=True)
 
     affected_field = Column(String, nullable=True)
     reason = Column(Text, nullable=False)
     evidence_refs = Column(JSON, default=[])
     recommended_action = Column(Text, nullable=True)
     disposition = Column(SQLEnum(FindingDisposition), default=FindingDisposition.PENDING)
-    reviewed_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    reviewed_by = Column(CoercingUuid(), ForeignKey("users.id"), nullable=True)
     reviewed_at = Column(DateTime, nullable=True)
     review_notes = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

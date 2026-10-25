@@ -54,3 +54,8 @@ alembic/versions/__pycache__/
 # Misc
 *.bak
 *.tmp
+
+# Local SQLite fallback database
+*.db
+*.sqlite3
+

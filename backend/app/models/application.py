@@ -1,10 +1,11 @@
 from sqlalchemy import Column, String, DateTime, Enum as SQLEnum, ForeignKey, Text, JSON
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Uuid
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 import uuid
 from datetime import datetime
 import enum
+from app.models.types import CoercingUuid
 
 
 class ApplicationStatus(str, enum.Enum):
@@ -21,10 +22,10 @@ class ApplicationStatus(str, enum.Enum):
 class Application(Base):
     __tablename__ = "applications"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(CoercingUuid(), primary_key=True, default=uuid.uuid4)
     reference_no = Column(String, unique=True, index=True, nullable=False)
-    applicant_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    assigned_reviewer_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    applicant_id = Column(CoercingUuid(), ForeignKey("users.id"), nullable=False)
+    assigned_reviewer_id = Column(CoercingUuid(), ForeignKey("users.id"), nullable=True)
 
     organization_name = Column(String, nullable=False)
     application_category = Column(String, nullable=False)
@@ -50,11 +51,11 @@ class Application(Base):
 class ApplicationStatusHistory(Base):
     __tablename__ = "application_status_history"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    application_id = Column(UUID(as_uuid=True), ForeignKey("applications.id"), nullable=False)
+    id = Column(CoercingUuid(), primary_key=True, default=uuid.uuid4)
+    application_id = Column(CoercingUuid(), ForeignKey("applications.id"), nullable=False)
     from_status = Column(String, nullable=True)
     to_status = Column(String, nullable=False)
-    actor_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    actor_id = Column(CoercingUuid(), ForeignKey("users.id"), nullable=True)
     reason = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

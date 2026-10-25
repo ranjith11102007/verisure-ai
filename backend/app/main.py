@@ -145,6 +145,37 @@ async def health_check():
     return {"status": "healthy", "service": settings.APP_NAME, "version": "1.0.0"}
 
 
+@app.get("/api/health/db")
+async def database_health():
+    """Report which database is active and why (never exposes credentials)."""
+    from app.core import database
+    from sqlalchemy import inspect, text
+
+    backend = "sqlite" if database.IS_SQLITE else "postgresql"
+    info = {
+        "backend": backend,
+        "configured_url_present": bool(database.CONFIGURED_DATABASE_URL),
+        "active_url": database._redact(database.ACTIVE_DATABASE_URL),
+        "is_fallback": bool(database.CONFIGURED_DATABASE_URL) and database.IS_SQLITE,
+        "last_connection_error": (
+            f"{type(database.LAST_CONNECTION_ERROR).__name__}: {database.LAST_CONNECTION_ERROR}"
+            if database.LAST_CONNECTION_ERROR
+            else None
+        ),
+    }
+    try:
+        with database.engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+            tables = inspect(conn).get_table_names()
+        info["connected"] = True
+        info["table_count"] = len(tables)
+        info["tables"] = sorted(tables)
+    except Exception as exc:
+        info["connected"] = False
+        info["error"] = f"{type(exc).__name__}: {exc}"
+    return info
+
+
 @app.get("/")
 async def root():
     return {"message": "VeriSure AI API", "docs": "/api/docs"}

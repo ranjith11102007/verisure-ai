@@ -10,7 +10,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    DATABASE_URL: str = "postgresql://verisure_user:verisure_pass@localhost:5432/verisure_db"
+    # Leave empty to use the local SQLite fallback. Set this to a PostgreSQL
+    # connection string in production for persistent storage.
+    DATABASE_URL: str = ""
 
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000,https://verisure-ai.vercel.app"
 

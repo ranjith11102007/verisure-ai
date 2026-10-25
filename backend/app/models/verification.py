@@ -1,10 +1,11 @@
 from sqlalchemy import Column, String, DateTime, Enum as SQLEnum, ForeignKey, Text, Integer, Boolean
-from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy import Uuid, JSON
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 import uuid
 from datetime import datetime
 import enum
+from app.models.types import CoercingUuid
 
 
 class VerificationStatus(str, enum.Enum):
@@ -19,10 +20,10 @@ class VerificationStatus(str, enum.Enum):
 class VerificationCheck(Base):
     __tablename__ = "verification_checks"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"), nullable=True)
-    application_id = Column(UUID(as_uuid=True), ForeignKey("applications.id"), nullable=True)
-    executed_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    id = Column(CoercingUuid(), primary_key=True, default=uuid.uuid4)
+    document_id = Column(CoercingUuid(), ForeignKey("documents.id"), nullable=True)
+    application_id = Column(CoercingUuid(), ForeignKey("applications.id"), nullable=True)
+    executed_by = Column(CoercingUuid(), ForeignKey("users.id"), nullable=True)
 
     check_type = Column(String, nullable=False)
     method = Column(String, nullable=False)

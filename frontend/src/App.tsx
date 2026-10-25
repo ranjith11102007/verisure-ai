@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
 import { AuthGuard } from './components/AuthGuard'
+import Landing from './pages/Landing'
 import Dashboard from './pages/Dashboard'
 import Applications from './pages/Applications'
 import ApplicationDetail from './pages/ApplicationDetail'
@@ -23,26 +24,31 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public */}
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<AuthGuard><AppShell /></AuthGuard>}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="applications" element={<Applications />} />
-          <Route path="applications/:id" element={<ApplicationDetail />} />
-          <Route path="upload" element={<Upload />} />
-          <Route path="document-intelligence" element={<DocumentIntelligence />} />
-          <Route path="document-auth" element={<DocumentAuth />} />
-          <Route path="compliance" element={<Compliance />} />
-          <Route path="rules" element={<Rules />} />
-          <Route path="evidence" element={<EvidenceRequests />} />
-          <Route path="audit" element={<Audit />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="*" element={<NotFound />} />
+
+        {/* Authenticated application shell */}
+        <Route element={<AuthGuard><AppShell /></AuthGuard>}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/applications" element={<Applications />} />
+          <Route path="/applications/:id" element={<ApplicationDetail />} />
+          <Route path="/upload" element={<Upload />} />
+          <Route path="/document-intelligence" element={<DocumentIntelligence />} />
+          <Route path="/document-auth" element={<DocumentAuth />} />
+          <Route path="/compliance" element={<Compliance />} />
+          <Route path="/rules" element={<Rules />} />
+          <Route path="/evidence" element={<EvidenceRequests />} />
+          <Route path="/audit" element={<Audit />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Route>
+
+        <Route path="/app" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

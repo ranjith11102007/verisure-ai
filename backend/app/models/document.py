@@ -1,10 +1,11 @@
 from sqlalchemy import Column, String, DateTime, Enum as SQLEnum, ForeignKey, Integer, Text, JSON
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Uuid
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 import uuid
 from datetime import datetime
 import enum
+from app.models.types import CoercingUuid
 
 
 class DocumentStatus(str, enum.Enum):
@@ -18,9 +19,9 @@ class DocumentStatus(str, enum.Enum):
 class Document(Base):
     __tablename__ = "documents"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    application_id = Column(UUID(as_uuid=True), ForeignKey("applications.id"), nullable=False)
-    uploaded_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    id = Column(CoercingUuid(), primary_key=True, default=uuid.uuid4)
+    application_id = Column(CoercingUuid(), ForeignKey("applications.id"), nullable=False)
+    uploaded_by = Column(CoercingUuid(), ForeignKey("users.id"), nullable=False)
 
     original_filename = Column(String, nullable=False)
     stored_filename = Column(String, nullable=False)
