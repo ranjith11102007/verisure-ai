@@ -9,7 +9,7 @@ from typing import Optional
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> User:
+def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -21,12 +21,29 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
     user_id = payload.get("sub")
     if user_id is None:
         raise credentials_exception
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise credentials_exception
-    if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return user
+    
+    # Try DB first
+    try:
+        user = db.query(User).filter(User.id == user_id).first()
+        if user is not None:
+            if not user.is_active:
+                raise HTTPException(status_code=400, detail="Inactive user")
+            return user
+    except Exception:
+        pass
+    
+    # Fallback to in-memory
+    try:
+        from app.api.v1.endpoints import auth as auth_module
+        if user_id in auth_module.USERS_DB:
+            user = auth_module.USERS_DB[user_id]
+            if not user.get("is_active", True):
+                raise HTTPException(status_code=400, detail="Inactive user")
+            return user
+    except Exception:
+        pass
+    
+    raise credentials_exception
 
 
 def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
