@@ -55,7 +55,7 @@ def ensure_database_schema():
 def seed_default_data():
     """Seed the default compliance rule set and the administrator account."""
     from app.core.database import SessionLocal
-    from app.core.security import get_password_hash
+    from app.core.security import get_password_hash, verify_password
     from app.models.user import User, UserRole
     from app.models.compliance import ComplianceRule, Severity
 
@@ -75,6 +75,17 @@ def seed_default_data():
             db.add(admin)
             db.commit()
             logger.info("Seeded administrator account: %s", settings.ADMIN_EMAIL)
+        elif (
+            settings.ADMIN_PASSWORD
+            and settings.ADMIN_PASSWORD != "change-this-password"
+            and not verify_password(settings.ADMIN_PASSWORD, admin.password_hash)
+        ):
+            # An explicitly configured password always wins over a previously
+            # seeded hash, so rotating ADMIN_PASSWORD on the host takes effect.
+            admin.password_hash = get_password_hash(settings.ADMIN_PASSWORD)
+            admin.is_active = True
+            db.commit()
+            logger.info("Administrator password updated from ADMIN_PASSWORD.")
 
         # --- Default compliance rules ---
         default_rules = [
