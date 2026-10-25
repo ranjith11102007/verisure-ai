@@ -37,6 +37,11 @@ export default function Login() {
               Intelligent Application Validation &amp; Regulatory Compliance
             </p>
           </div>
+          <p className="text-center text-xs mb-4">
+            <Link to="/" className="text-primary hover:underline">
+              ← Back to home
+            </Link>
+          </p>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-on-surface mb-1">Email</label>

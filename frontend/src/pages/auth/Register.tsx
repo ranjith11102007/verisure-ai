@@ -39,6 +39,11 @@ export default function Register() {
           <h1 className="text-xl font-headline font-bold text-on-surface">Create Account</h1>
           <p className="text-sm text-on-surface-variant mt-1">Register for VeriSure AI</p>
         </div>
+        <p className="text-center text-xs mb-4">
+          <Link to="/" className="text-primary hover:underline">
+            ← Back to home
+          </Link>
+        </p>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-on-surface mb-1">Full Name</label>
