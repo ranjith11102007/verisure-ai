@@ -29,6 +29,23 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api/v1")
 
+
+@app.on_event("startup")
+def ensure_database_schema():
+    """Create any missing tables on startup.
+
+    This is a safety net for deployments where migrations were not run
+    (e.g. Render free tier has no shell access).
+    """
+    try:
+        from app.core.database import Base, engine
+        from app import models  # noqa: F401
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database schema verified/created successfully.")
+    except Exception as exc:  # pragma: no cover - deployment safety net
+        logger.error("Could not create database schema: %s", exc)
+
+
 # Ensure uploads directory exists (ephemeral on free hosts)
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 os.makedirs(os.path.join(settings.UPLOAD_DIR, "documents"), exist_ok=True)
