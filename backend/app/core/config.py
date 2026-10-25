@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = "postgresql://verisure_user:verisure_pass@localhost:5432/verisure_db"
 
-    ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+    ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000,https://verisure-ai.vercel.app"
 
     UPLOAD_DIR: str = "./uploads"
     MAX_UPLOAD_SIZE_MB: int = 50

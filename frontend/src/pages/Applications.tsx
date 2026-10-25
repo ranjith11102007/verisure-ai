@@ -1,20 +1,65 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { applicationsApi } from '../lib/api'
+import { applicationsApi, getApiError, formatDate } from '../lib/api'
+import {
+  Card,
+  EmptyState,
+  ErrorBanner,
+  Field,
+  PageHeader,
+  PrimaryButton,
+  SecondaryButton,
+  StatusBadge,
+  inputClass,
+} from '../components/ui'
+
+const CATEGORIES = [
+  'New Establishment',
+  'Extension of Approval',
+  'Renewal',
+  'Faculty Expansion',
+  'Programme Accreditation',
+]
+
+const STATUSES = [
+  'draft',
+  'submitted',
+  'processing',
+  'under_review',
+  'more_info_required',
+  'approved',
+  'rejected',
+  'archived',
+]
 
 export default function Applications() {
   const [applications, setApplications] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+
   const [showCreate, setShowCreate] = useState(false)
-  const [form, setForm] = useState({ organization_name: '', application_category: '' })
   const [creating, setCreating] = useState(false)
+  const [createError, setCreateError] = useState('')
+  const [form, setForm] = useState({
+    organization_name: '',
+    application_category: '',
+    contact_email: '',
+    registration_number: '',
+  })
 
   const fetchApps = async () => {
+    setLoading(true)
+    setError('')
     try {
-      const res = await applicationsApi.list()
+      const params: any = {}
+      if (statusFilter) params.status = statusFilter
+      if (search.trim()) params.search = search.trim()
+      const res = await applicationsApi.list(params)
       setApplications(res.data.applications || [])
-    } catch (err) {
-      console.error(err)
+    } catch (err: any) {
+      setError(getApiError(err, 'Failed to load applications'))
     } finally {
       setLoading(false)
     }
@@ -22,124 +67,190 @@ export default function Applications() {
 
   useEffect(() => {
     fetchApps()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusFilter])
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
+    setCreateError('')
     setCreating(true)
     try {
-      await applicationsApi.create(form)
+      await applicationsApi.create({
+        organization_name: form.organization_name,
+        application_category: form.application_category,
+        applicant_details: {
+          contact_email: form.contact_email || undefined,
+          registration_number: form.registration_number || undefined,
+        },
+      })
       setShowCreate(false)
-      setForm({ organization_name: '', application_category: '' })
-      fetchApps()
+      setForm({ organization_name: '', application_category: '', contact_email: '', registration_number: '' })
+      await fetchApps()
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to create application')
+      setCreateError(getApiError(err, 'Failed to create application'))
     } finally {
       setCreating(false)
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    const styles: any = {
-      draft: 'bg-surface-container text-on-surface-variant',
-      submitted: 'bg-primary-fixed text-on-primary-fixed-variant',
-      processing: 'bg-surface-container-high text-on-surface',
-      under_review: 'bg-secondary-container/30 text-on-secondary-container',
-      more_info_required: 'bg-error-container/30 text-on-error-container',
-      approved: 'bg-secondary-fixed/40 text-on-secondary-fixed-variant',
-      rejected: 'bg-error-container text-on-error-container',
-      archived: 'bg-surface-container text-outline',
-    }
-    return styles[status] || styles.draft
-  }
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-headline font-bold text-on-surface">Institutional Applications Registry</h1>
-          <p className="text-sm text-on-surface-variant mt-1">Search, triage, and audit all submitted applications</p>
+      <PageHeader
+        title="Institutional Applications Registry"
+        subtitle="Search, triage, and audit all submitted applications"
+        actions={<PrimaryButton icon="add" onClick={() => setShowCreate(true)}>New Institutional Application</PrimaryButton>}
+      />
+
+      {error && <ErrorBanner message={error} onRetry={fetchApps} />}
+
+      <Card padded={false}>
+        <div className="flex flex-wrap items-center gap-3 p-4 border-b border-outline-variant/20">
+          <div className="relative flex-1 min-w-[220px]">
+            <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[18px] text-outline">
+              search
+            </span>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && fetchApps()}
+              placeholder="Search by organization or reference number"
+              className={`${inputClass} pl-8`}
+            />
+          </div>
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className={`${inputClass} w-48`}>
+            <option value="">All statuses</option>
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s.replace(/_/g, ' ')}
+              </option>
+            ))}
+          </select>
+          <SecondaryButton icon="search" onClick={fetchApps}>
+            Search
+          </SecondaryButton>
         </div>
-        <button onClick={() => setShowCreate(true)} className="flex items-center gap-1.5 px-4 py-2 rounded bg-primary-container text-on-primary hover:bg-primary text-sm shadow-sm">
-          <span className="material-symbols-outlined text-[18px]">add</span>
-          <span>New Institutional Application</span>
-        </button>
-      </div>
+
+        {loading ? (
+          <div className="text-center py-12 text-on-surface-variant">Loading...</div>
+        ) : applications.length === 0 ? (
+          <EmptyState
+            icon="folder_open"
+            title="No applications found"
+            description="Create your first application or adjust the filters above."
+            action={<PrimaryButton icon="add" onClick={() => setShowCreate(true)}>Create Application</PrimaryButton>}
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-surface-container-low">
+                <tr>
+                  {['Reference No', 'Organization', 'Category', 'Status', 'Created', 'Actions'].map((h) => (
+                    <th
+                      key={h}
+                      className={`px-4 py-2.5 text-xs font-semibold text-on-surface-variant uppercase tracking-wider ${
+                        h === 'Actions' ? 'text-right' : 'text-left'
+                      }`}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/20">
+                {applications.map((app) => (
+                  <tr key={app.id} className="hover:bg-surface-container-low/40">
+                    <td className="px-4 py-3 font-mono text-sm text-primary font-semibold">{app.reference_no}</td>
+                    <td className="px-4 py-3 text-sm text-on-surface">{app.organization_name}</td>
+                    <td className="px-4 py-3 text-sm text-on-surface-variant">{app.application_category}</td>
+                    <td className="px-4 py-3">
+                      <StatusBadge status={app.status} />
+                    </td>
+                    <td className="px-4 py-3 text-sm text-on-surface-variant">{formatDate(app.created_at)}</td>
+                    <td className="px-4 py-3 text-right">
+                      <Link to={`/applications/${app.id}`} className="text-primary hover:underline text-sm">
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
 
       {showCreate && (
         <div className="fixed inset-0 bg-inverse-surface/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-surface-container-lowest rounded-xl shadow-2xl max-w-md w-full p-6">
+          <div className="bg-surface-container-lowest rounded-xl shadow-2xl max-w-lg w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-headline font-semibold text-on-surface">Create Application</h2>
               <button onClick={() => setShowCreate(false)} className="text-outline-variant hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-on-surface mb-1">Organization/Institution Name</label>
-                <input type="text" value={form.organization_name} onChange={(e) => setForm({...form, organization_name: e.target.value})} required className="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
+
+            {createError && (
+              <div className="mb-4 rounded bg-error-container/40 px-3 py-2 text-sm text-on-error-container">
+                {createError}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-on-surface mb-1">Application Category</label>
-                <select value={form.application_category} onChange={(e) => setForm({...form, application_category: e.target.value})} required className="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+            )}
+
+            <form onSubmit={handleCreate} className="space-y-4">
+              <Field label="Organization / Institution Name">
+                <input
+                  type="text"
+                  value={form.organization_name}
+                  onChange={(e) => setForm({ ...form, organization_name: e.target.value })}
+                  required
+                  className={inputClass}
+                  placeholder="e.g. National Institute of Technology"
+                />
+              </Field>
+              <Field label="Application Category">
+                <select
+                  value={form.application_category}
+                  onChange={(e) => setForm({ ...form, application_category: e.target.value })}
+                  required
+                  className={inputClass}
+                >
                   <option value="">Select category</option>
-                  <option value="New Establishment">New Establishment</option>
-                  <option value="Extension of Approval">Extension of Approval</option>
-                  <option value="Renewal">Renewal</option>
-                  <option value="Faculty Expansion">Faculty Expansion</option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
                 </select>
+              </Field>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Registration Number" hint="Used by compliance checks">
+                  <input
+                    type="text"
+                    value={form.registration_number}
+                    onChange={(e) => setForm({ ...form, registration_number: e.target.value })}
+                    className={inputClass}
+                    placeholder="REG-2026-001"
+                  />
+                </Field>
+                <Field label="Institutional Contact Email">
+                  <input
+                    type="email"
+                    value={form.contact_email}
+                    onChange={(e) => setForm({ ...form, contact_email: e.target.value })}
+                    className={inputClass}
+                    placeholder="registrar@institute.edu"
+                  />
+                </Field>
               </div>
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setShowCreate(false)} className="flex-1 h-9 rounded bg-surface-container text-on-surface hover:bg-surface-container-high text-sm">Cancel</button>
-                <button type="submit" disabled={creating} className="flex-1 h-9 rounded bg-primary text-on-primary hover:bg-primary-container disabled:opacity-50 text-sm">{creating ? 'Creating...' : 'Create'}</button>
+                <SecondaryButton onClick={() => setShowCreate(false)}>Cancel</SecondaryButton>
+                <PrimaryButton type="submit" disabled={creating} icon="save">
+                  {creating ? 'Creating...' : 'Create Application'}
+                </PrimaryButton>
               </div>
             </form>
           </div>
         </div>
       )}
-
-      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
-        {loading ? (
-          <div className="text-center py-12 text-on-surface-variant">Loading...</div>
-        ) : applications.length === 0 ? (
-          <div className="text-center py-12 text-on-surface-variant">
-            <span className="material-symbols-outlined text-4xl mb-2 block">folder_open</span>
-            <p>No applications found. Create your first application.</p>
-          </div>
-        ) : (
-          <table className="w-full">
-            <thead className="bg-surface-container-low">
-              <tr>
-                <th className="text-left px-4 py-2.5 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Reference No</th>
-                <th className="text-left px-4 py-2.5 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Organization</th>
-                <th className="text-left px-4 py-2.5 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Category</th>
-                <th className="text-left px-4 py-2.5 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Status</th>
-                <th className="text-left px-4 py-2.5 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Created</th>
-                <th className="text-right px-4 py-2.5 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-outline-variant/20">
-              {applications.map((app) => (
-                <tr key={app.id} className="hover:bg-surface-container-low/40">
-                  <td className="px-4 py-3 font-mono text-sm text-primary font-semibold">{app.reference_no}</td>
-                  <td className="px-4 py-3 text-sm text-on-surface">{app.organization_name}</td>
-                  <td className="px-4 py-3 text-sm text-on-surface-variant">{app.application_category}</td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${getStatusBadge(app.status)}`}>
-                      {app.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-on-surface-variant">{new Date(app.created_at).toLocaleDateString()}</td>
-                  <td className="px-4 py-3 text-right">
-                    <Link to={`/applications/${app.id}`} className="text-primary hover:underline text-sm">View</Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
     </div>
   )
 }

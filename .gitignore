@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 venv/
+venv*/
 .venv/
 env/
 
@@ -32,6 +33,9 @@ logs/
 .pytest_cache/
 .coverage
 htmlcov/
+test-results/
+*.out
+smoke_out.txt
 
 # IDE
 .vscode/

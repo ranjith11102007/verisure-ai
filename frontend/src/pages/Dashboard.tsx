@@ -1,88 +1,186 @@
-import { useState, useEffect } from 'react'
-import { applicationsApi } from '../lib/api'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { applicationsApi, reportsApi, complianceApi } from '../lib/api'
+import { Card, PageHeader, StatCard, StatusBadge, EmptyState, ErrorBanner } from '../components/ui'
+import { formatDate, formatStatus } from '../lib/api'
 
 export default function Dashboard() {
-  const [stats, setStats] = useState({ total: 0, submitted: 0, under_review: 0, approved: 0 })
+  const [stats, setStats] = useState<any>(null)
   const [recent, setRecent] = useState<any[]>([])
+  const [findings, setFindings] = useState<any[]>([])
+  const [summary, setSummary] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const load = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const [statsRes, appsRes, findingsRes, summaryRes] = await Promise.all([
+        applicationsApi.stats(),
+        applicationsApi.list({ limit: 5 }),
+        complianceApi.findings(),
+        reportsApi.summary(),
+      ])
+      setStats(statsRes.data)
+      setRecent(appsRes.data.applications || [])
+      setFindings((findingsRes.data.findings || []).slice(0, 5))
+      setSummary(summaryRes.data)
+    } catch (err: any) {
+      setError(err?.response?.data?.detail || 'Unable to load dashboard data')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    applicationsApi.list({ limit: 5 })
-      .then(res => {
-        const apps = res.data.applications || []
-        setRecent(apps)
-        setStats({
-          total: res.data.total || apps.length,
-          submitted: apps.filter((a: any) => a.status === 'submitted').length,
-          under_review: apps.filter((a: any) => a.status === 'under_review').length,
-          approved: apps.filter((a: any) => a.status === 'approved').length,
-        })
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false))
+    load()
   }, [])
+
+  const byStatus = stats?.by_status || {}
+  const pendingFindings = findings.filter((f) => f.disposition === 'pending').length
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2 text-on-surface-variant text-xs uppercase tracking-wider mb-1">
+      <PageHeader
+        title="Executive Regulatory Oversight"
+        subtitle="Real-time oversight of submissions, evidence and statutory compliance"
+        eyebrow={
+          <>
             <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
             <span>Statutory Governance Engine</span>
             <span>/</span>
             <span>Real-time Oversight</span>
-          </div>
-          <h1 className="text-2xl font-headline font-bold text-on-surface">Executive Regulatory Oversight</h1>
-        </div>
-      </div>
+          </>
+        }
+        actions={
+          <Link
+            to="/applications"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-primary text-on-primary hover:bg-primary-container text-sm shadow-sm"
+          >
+            <span className="material-symbols-outlined text-[18px]">add</span>
+            New Application
+          </Link>
+        }
+      />
+
+      {error && <ErrorBanner message={error} onRetry={load} />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Submissions', value: stats.total, icon: 'account_balance', color: 'primary' },
-          { label: 'Submitted', value: stats.submitted, icon: 'send', color: 'secondary' },
-          { label: 'Under Review', value: stats.under_review, icon: 'pending_actions', color: 'primary-container' },
-          { label: 'Approved', value: stats.approved, icon: 'task_alt', color: 'secondary' },
-        ].map((m, i) => (
-          <div key={i} className="bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-outline-variant/20">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-xs uppercase tracking-wider text-outline">{m.label}</div>
-              </div>
-              <div className={`w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-${m.color}`}>
-                <span className="material-symbols-outlined text-[20px]">{m.icon}</span>
-              </div>
-            </div>
-            <div className="mt-4 text-3xl font-headline font-bold text-on-surface">{loading ? '-' : m.value}</div>
-          </div>
-        ))}
+        <StatCard
+          label="Total Submissions"
+          value={stats?.total ?? 0}
+          icon="account_balance"
+          loading={loading}
+          hint={`${byStatus.draft || 0} in draft`}
+        />
+        <StatCard
+          label="Submitted"
+          value={byStatus.submitted || 0}
+          icon="send"
+          loading={loading}
+          hint={`${byStatus.under_review || 0} under review`}
+        />
+        <StatCard
+          label="Approved"
+          value={byStatus.approved || 0}
+          icon="task_alt"
+          loading={loading}
+          hint={`${summary?.totals?.approval_rate ?? 0}% approval rate`}
+        />
+        <StatCard
+          label="Open Compliance Findings"
+          value={pendingFindings}
+          icon="gavel"
+          loading={loading}
+          hint={`${stats?.documents ?? 0} documents on file`}
+        />
       </div>
 
-      <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 p-6">
-        <div className="mb-4">
-          <h2 className="text-lg font-headline font-semibold text-on-surface">Recent Applications</h2>
-          <p className="text-sm text-on-surface-variant">Latest submissions from your account</p>
-        </div>
-        {loading ? (
-          <div className="text-center py-8 text-on-surface-variant">Loading...</div>
-        ) : recent.length === 0 ? (
-          <div className="text-center py-12 text-on-surface-variant">
-            <span className="material-symbols-outlined text-4xl mb-2 block">inbox</span>
-            <p>No applications yet. Create your first application from the Applications page.</p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2" padded={false}>
+          <div className="p-6 pb-4">
+            <h2 className="text-lg font-headline font-semibold text-on-surface">Recent Applications</h2>
+            <p className="text-sm text-on-surface-variant">Latest submissions from your account</p>
           </div>
-        ) : (
-          <div className="space-y-2">
-            {recent.map((app) => (
-              <div key={app.id} className="flex items-center justify-between p-3 bg-surface-container-low/50 rounded-lg">
-                <div>
-                  <div className="font-medium text-on-surface">{app.organization_name}</div>
-                  <div className="text-sm text-on-surface-variant font-mono">{app.reference_no}</div>
-                </div>
-                <div className="text-sm text-on-surface-variant capitalize">{app.status.replace('_', ' ')}</div>
+          {loading ? (
+            <div className="text-center py-8 text-on-surface-variant">Loading...</div>
+          ) : recent.length === 0 ? (
+            <EmptyState
+              icon="inbox"
+              title="No applications yet"
+              description="Create your first institutional application to begin the compliance workflow."
+              action={
+                <Link to="/applications" className="text-primary text-sm hover:underline">
+                  Go to Application Registry
+                </Link>
+              }
+            />
+          ) : (
+            <div className="divide-y divide-outline-variant/20">
+              {recent.map((app) => (
+                <Link
+                  key={app.id}
+                  to={`/applications/${app.id}`}
+                  className="flex items-center justify-between px-6 py-3 hover:bg-surface-container-low/50"
+                >
+                  <div>
+                    <div className="font-medium text-on-surface">{app.organization_name}</div>
+                    <div className="text-xs text-on-surface-variant font-mono">{app.reference_no}</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <StatusBadge status={app.status} />
+                    <span className="text-xs text-on-surface-variant">{formatDate(app.created_at)}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          <h2 className="text-lg font-headline font-semibold text-on-surface">Compliance Snapshot</h2>
+          <p className="text-sm text-on-surface-variant mb-4">Latest findings across your portfolio</p>
+          {loading ? (
+            <div className="text-center py-6 text-on-surface-variant text-sm">Loading...</div>
+          ) : findings.length === 0 ? (
+            <div className="text-sm text-on-surface-variant py-6 text-center">
+              No compliance findings recorded yet.
+              <div className="mt-2">
+                <Link to="/compliance" className="text-primary hover:underline text-sm">
+                  Run a compliance check
+                </Link>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {findings.map((f) => (
+                <li key={f.id} className="border border-outline-variant/30 rounded-lg p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-mono text-primary">{f.rule_code}</span>
+                    <StatusBadge status={f.severity || 'medium'} />
+                  </div>
+                  <p className="text-sm text-on-surface mt-1 line-clamp-2">{f.reason}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
       </div>
+
+      <Card>
+        <h2 className="text-lg font-headline font-semibold text-on-surface mb-4">Portfolio by Status</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+          {Object.entries(byStatus).map(([key, value]) => (
+            <div key={key} className="bg-surface-container-low rounded-lg p-3 text-center">
+              <div className="text-xl font-bold text-on-surface">{value as number}</div>
+              <div className="text-[11px] uppercase tracking-wide text-on-surface-variant mt-1">
+                {formatStatus(key)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   )
 }

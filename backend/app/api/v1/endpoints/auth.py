@@ -16,15 +16,17 @@ EMAIL_TO_ID = {}
 
 
 def get_db_safe():
+    """Yield a DB session, or None if the database is unreachable."""
     try:
         from app.core.database import SessionLocal
         db = SessionLocal()
-        try:
-            yield db
-        finally:
-            db.close()
     except Exception:
         yield None
+        return
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 class UserRegister(BaseModel):
@@ -34,7 +36,10 @@ class UserRegister(BaseModel):
 
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    # Deliberately a plain string: login is a lookup, and the seeded
+    # administrator account uses an internal (.local) domain which
+    # pydantic's EmailStr rejects as a reserved TLD.
+    email: str
     password: str
 
 
