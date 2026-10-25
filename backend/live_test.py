@@ -141,7 +141,7 @@ def main():
     print("\n[UI] Admin reviewer flow")
     r = c.post(
         "/api/v1/auth/login",
-        json={"email": "admin@verisure.local", "password": os.environ.get("ADMIN_PASSWORD", "AdminVeriSure@2026")},
+        json={"email": "admin@verisure.local", "password": os.environ.get("ADMIN_PASSWORD", "change-this-password")},
     )
     if r.status_code == 200:
         ah = {"Authorization": f"Bearer {r.json()['access_token']}"}

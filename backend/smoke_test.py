@@ -142,7 +142,7 @@ def main() -> int:
         print("\n[11] Admin flow")
         r = client.post(
             "/api/v1/auth/login",
-            json={"email": "admin@verisure.local", "password": os.environ.get("ADMIN_PASSWORD", "AdminVeriSure@2026")},
+            json={"email": "admin@verisure.local", "password": os.environ.get("ADMIN_PASSWORD", "change-this-password")},
         )
         if r.status_code == 200:
             check("admin login", True)

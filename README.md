@@ -158,6 +158,10 @@ python smoke_test.py
 
 # Live HTTP test against a running server; override the target with TEST_BASE
 python live_test.py
+
+# End-to-end browser test against a deployed site (needs Edge/Chrome started
+# with --remote-debugging-port=9223, see browser_test.mjs for details)
+node browser_test.mjs
 ```
 
 Both suites exercise the complete workflow: registration, application creation,

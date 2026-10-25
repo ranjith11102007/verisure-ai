@@ -156,7 +156,7 @@ cd backend
 python -m venv venv
 .\venv\Scripts\pip install -r requirements.txt
 $env:DATABASE_URL="postgresql://user:pass@host/db?sslmode=require"
-$env:ADMIN_PASSWORD="AdminVeriSure@2026"
+$env:ADMIN_PASSWORD="change-this-password"
 .\venv\Scripts\python -m uvicorn app.main:app --reload --port 8000
 
 # Frontend (second terminal)
