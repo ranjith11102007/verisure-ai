@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.core.database import get_db
 from app.core.security import verify_password, get_password_hash, create_access_token
 from app.models.user import User, UserRole
 from app.api.deps import get_current_user
@@ -14,6 +13,18 @@ router = APIRouter()
 # In-memory fallback store
 USERS_DB = {}
 EMAIL_TO_ID = {}
+
+
+def get_db_safe():
+    try:
+        from app.core.database import SessionLocal
+        db = SessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
+    except Exception:
+        yield None
 
 
 class UserRegister(BaseModel):
@@ -44,71 +55,78 @@ class UserResponse(BaseModel):
 
 
 @router.post("/register", response_model=Token)
-def register(user_data: UserRegister, db: Session = Depends(get_db)):
+def register(user_data: UserRegister, db: Session = Depends(get_db_safe)):
     if len(user_data.password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
     
     email_lower = user_data.email.lower()
     
-    # Try DB first, fallback to in-memory
-    try:
-        existing = db.query(User).filter(User.email == email_lower).first()
-        if existing:
-            raise HTTPException(status_code=400, detail="Email already registered")
-        
-        user = User(
-            email=email_lower,
-            password_hash=get_password_hash(user_data.password),
-            full_name=user_data.full_name.strip(),
-            role=UserRole.APPLICANT,
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        access_token = create_access_token(subject=str(user.id))
-        return {"access_token": access_token, "token_type": "bearer"}
-    except Exception:
-        # Fallback to in-memory
-        if email_lower in EMAIL_TO_ID:
-            raise HTTPException(status_code=400, detail="Email already registered")
-        user_id = str(uuid.uuid4())
-        USERS_DB[user_id] = {
-            "id": user_id,
-            "email": email_lower,
-            "password_hash": get_password_hash(user_data.password),
-            "full_name": user_data.full_name.strip(),
-            "role": "applicant",
-            "is_active": True,
-        }
-        EMAIL_TO_ID[email_lower] = user_id
-        access_token = create_access_token(subject=user_id)
-        return {"access_token": access_token, "token_type": "bearer"}
+    # Try DB first if available
+    if db is not None:
+        try:
+            existing = db.query(User).filter(User.email == email_lower).first()
+            if existing:
+                raise HTTPException(status_code=400, detail="Email already registered")
+            
+            user = User(
+                email=email_lower,
+                password_hash=get_password_hash(user_data.password),
+                full_name=user_data.full_name.strip(),
+                role=UserRole.APPLICANT,
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            access_token = create_access_token(subject=str(user.id))
+            return {"access_token": access_token, "token_type": "bearer"}
+        except HTTPException:
+            raise
+        except Exception:
+            pass
+    
+    # Fallback to in-memory
+    if email_lower in EMAIL_TO_ID:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    user_id = str(uuid.uuid4())
+    USERS_DB[user_id] = {
+        "id": user_id,
+        "email": email_lower,
+        "password_hash": get_password_hash(user_data.password),
+        "full_name": user_data.full_name.strip(),
+        "role": "applicant",
+        "is_active": True,
+    }
+    EMAIL_TO_ID[email_lower] = user_id
+    access_token = create_access_token(subject=user_id)
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @router.post("/login", response_model=Token)
-def login(user_data: UserLogin, db: Session = Depends(get_db)):
+def login(user_data: UserLogin, db: Session = Depends(get_db_safe)):
     email_lower = user_data.email.lower()
-    try:
-        user = db.query(User).filter(User.email == email_lower).first()
-        if not user or not verify_password(user_data.password, user.password_hash):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
-        if not user.is_active:
-            raise HTTPException(status_code=400, detail="Account is inactive")
-        access_token = create_access_token(subject=str(user.id))
-        return {"access_token": access_token, "token_type": "bearer"}
-    except HTTPException:
-        raise
-    except Exception:
-        if email_lower not in EMAIL_TO_ID:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
-        user_id = EMAIL_TO_ID[email_lower]
-        user = USERS_DB.get(user_id)
-        if not user or not verify_password(user_data.password, user["password_hash"]):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
-        if not user.get("is_active", True):
-            raise HTTPException(status_code=400, detail="Account is inactive")
-        access_token = create_access_token(subject=user_id)
-        return {"access_token": access_token, "token_type": "bearer"}
+    if db is not None:
+        try:
+            user = db.query(User).filter(User.email == email_lower).first()
+            if user and verify_password(user_data.password, user.password_hash) and user.is_active:
+                access_token = create_access_token(subject=str(user.id))
+                return {"access_token": access_token, "token_type": "bearer"}
+            if user and not user.is_active:
+                raise HTTPException(status_code=400, detail="Account is inactive")
+        except HTTPException:
+            raise
+        except Exception:
+            pass
+    
+    if email_lower not in EMAIL_TO_ID:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+    user_id = EMAIL_TO_ID[email_lower]
+    user = USERS_DB.get(user_id)
+    if not user or not verify_password(user_data.password, user["password_hash"]):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+    if not user.get("is_active", True):
+        raise HTTPException(status_code=400, detail="Account is inactive")
+    access_token = create_access_token(subject=user_id)
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @router.get("/me", response_model=UserResponse)
