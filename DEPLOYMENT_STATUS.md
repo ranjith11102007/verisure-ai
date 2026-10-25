@@ -13,6 +13,7 @@
 
 Full end-to-end regulatory workflow, verified against a live database:
 
+0. **Public landing page** at `/` explaining the platform, with sign-in/register entry points.
 1. **Authentication** — register, login, JWT session, logout, profile update.
 2. **Applications** — create, search, filter, paginate, view detail, submit for review.
 3. **Documents** — upload (PDF/PNG/JPEG), SHA-256 fingerprinting, duplicate detection, delete while draft.
@@ -27,7 +28,9 @@ Full end-to-end regulatory workflow, verified against a live database:
 Test results at time of writing:
 
 - `backend/smoke_test.py` — 26/26 pass (TestClient against Neon)
-- `backend/live_test.py` — 30/30 pass (real HTTP against running server, incl. CORS preflight)
+- `backend/live_test.py` — 30/30 pass against **PostgreSQL** (13 tables, `is_fallback: false`)
+- `backend/live_test.py` — 30/30 pass against the **SQLite fallback**
+- `frontend` production build — no TypeScript errors
 
 ## Required environment variables
 
@@ -52,7 +55,29 @@ Test results at time of writing:
 frontend works even if `VITE_API_BASE_URL` is not configured. It also rewrites all other
 paths to `index.html` so deep links (e.g. `/applications/<id>`) survive a page refresh.
 
-## Database schema
+## Database behaviour
+
+The backend **prefers PostgreSQL** and **falls back to SQLite** automatically:
+
+- If `DATABASE_URL` is set and reachable, it is used (persistent storage).
+- If `DATABASE_URL` is missing or unreachable, the service starts on a local SQLite
+  file (`backend/verisure.db`) so the application always works. A prominent error is
+  logged, and `/api/health/db` reports `is_fallback: true` plus the connection error.
+- SQLite data does **not** survive a redeploy. Set `DATABASE_URL` for persistence.
+
+Column types are dialect-agnostic (`CoercingUuid`), so the same models run on both.
+
+### Diagnosing the database
+
+```
+GET https://verisure-backend-m1rb.onrender.com/api/health/db
+```
+
+Returns the active backend, whether it is a fallback, table count and the last
+connection error (credentials are never exposed). If `is_fallback` is `true`, the
+Render `DATABASE_URL` needs fixing.
+
+## Schema creation
 
 The `alembic/versions/` folder has no revision files, so `alembic upgrade head` is a no-op.
 The schema is created in two ways:

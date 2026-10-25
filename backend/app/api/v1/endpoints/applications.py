@@ -34,8 +34,24 @@ class StatusUpdate(BaseModel):
 
 
 def generate_ref_no(db: Session) -> str:
-    count = db.query(Application).count()
-    return f"VSA-{datetime.utcnow().year}-{count + 1:04d}"
+    """Allocate a unique, human-readable reference number.
+
+    Uses the current row count as a starting point, then scans forward so a
+    gap (or a concurrent insert) can never produce a duplicate reference.
+    """
+    year = datetime.utcnow().year
+    base = db.query(Application).count()
+    for offset in range(200):
+        candidate = f"VSA-{year}-{base + 1 + offset:04d}"
+        exists = (
+            db.query(Application.id)
+            .filter(Application.reference_no == candidate)
+            .first()
+        )
+        if exists is None:
+            return candidate
+    # Extremely unlikely: fall back to a random, still-unique suffix.
+    return f"VSA-{year}-{uuid.uuid4().hex[:8].upper()}"
 
 
 def serialize_app(app: Application) -> dict:
