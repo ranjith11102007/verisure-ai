@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
-import { usersApi } from '../lib/api'
+import { usersApi, systemApi } from '../lib/api'
 import { Card, Field, PageHeader, PrimaryButton, inputClass } from '../components/ui'
 
 const STORAGE_KEY = 'verisure.preferences'
@@ -16,6 +16,7 @@ export default function Settings() {
   const [prefs, setPrefs] = useState(defaultPrefs)
   const [profile, setProfile] = useState<any>(null)
   const [saved, setSaved] = useState(false)
+  const [db, setDb] = useState<any>(null)
 
   useEffect(() => {
     try {
@@ -28,6 +29,10 @@ export default function Settings() {
       .me()
       .then((res) => setProfile(res.data))
       .catch(() => setProfile(null))
+    systemApi
+      .database()
+      .then((res) => setDb(res.data))
+      .catch(() => setDb(null))
   }, [])
 
   const update = (key: keyof typeof defaultPrefs, value: boolean) => {
@@ -151,9 +156,35 @@ export default function Settings() {
               </div>
               <div className="flex items-center justify-between">
                 <dt className="text-on-surface-variant">Storage</dt>
-                <dd className="text-on-surface">PostgreSQL / Neon</dd>
+                <dd className="text-on-surface text-right">
+                  {db
+                    ? db.backend === 'postgresql'
+                      ? 'PostgreSQL'
+                      : db.is_fallback
+                        ? 'SQLite (fallback)'
+                        : 'SQLite'
+                    : 'Checking…'}
+                </dd>
               </div>
+              {db && (
+                <div className="flex items-center justify-between">
+                  <dt className="text-on-surface-variant">Database tables</dt>
+                  <dd className="text-on-surface">{db.table_count ?? '-'}</dd>
+                </div>
+              )}
             </dl>
+            {db?.is_fallback && (
+              <p className="mt-3 text-xs rounded bg-error-container/40 text-on-error-container px-3 py-2">
+                The configured database is unreachable, so this deployment is using temporary
+                local storage. Records will be lost when the service restarts.
+              </p>
+            )}
+            {db && !db.is_fallback && db.backend === 'sqlite' && (
+              <p className="mt-3 text-xs rounded bg-surface-container text-on-surface-variant px-3 py-2">
+                This deployment uses local SQLite storage. Records persist while the service
+                stays running but are cleared on redeploy.
+              </p>
+            )}
           </Card>
 
           <Card>

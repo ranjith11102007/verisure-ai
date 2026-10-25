@@ -81,12 +81,17 @@ export default function Login() {
         </div>
 
         <div className="mt-4 rounded-lg border border-outline-variant/30 bg-surface-container-low px-4 py-3 text-xs text-on-surface-variant">
-          <p className="font-medium text-on-surface mb-1">Demo accounts</p>
+          <p className="font-medium text-on-surface mb-1">Demo access</p>
           <p>
-            Administrator: <span className="font-mono">admin@verisure.local</span> /{' '}
-            <span className="font-mono">AdminVeriSure@2026</span>
+            Administrator: <span className="font-mono">admin@verisure.local</span>
           </p>
-          <p className="mt-1">Or register a new applicant account to walk through the full workflow.</p>
+          <p className="mt-1">
+            The administrator password is set by the deployment owner via{' '}
+            <span className="font-mono">ADMIN_PASSWORD</span>.
+          </p>
+          <p className="mt-1">
+            Or register a new applicant account to walk through the full workflow.
+          </p>
         </div>
       </div>
     </div>

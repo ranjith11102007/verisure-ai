@@ -134,4 +134,9 @@ export const reportsApi = {
   summary: () => api.get('/reports/summary'),
 }
 
+// /api/health/db lives outside /api/v1, so it needs its own request.
+export const systemApi = {
+  database: () => axios.get(`${RAW_BASE_URL}/api/health/db`),
+}
+
 export default api
