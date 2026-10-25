@@ -4,152 +4,117 @@
 
 Evidence-led verification. Trusted regulatory decisions.
 
+## Live Demo
+
+| Component | URL |
+| --- | --- |
+| Web application | https://verisure-ai.vercel.app |
+| API | https://verisure-backend-m1rb.onrender.com |
+| API documentation | https://verisure-backend-m1rb.onrender.com/api/docs |
+| Deployment status | [DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md) |
+
+Register an applicant account from `/register` to walk the full workflow, or sign in
+as the administrator to review submissions. See [Demo accounts](#demo-accounts).
+
 ## Overview
 
-VeriSure AI is a comprehensive platform for institutional application validation, document authentication, and regulatory compliance verification. Built with a focus on forensic rigor, auditability, and human-in-the-loop review.
+VeriSure AI is a platform for institutional application validation, document
+authentication and regulatory compliance verification. It is built around three
+properties that regulators care about:
 
-## Design
+1. **Evidence integrity** — every document is fingerprinted with SHA-256 and can be
+   re-verified later to detect tampering.
+2. **Deterministic compliance** — a versioned rule engine evaluates each application
+   and records findings with an explicit disposition.
+3. **Accountability** — every submission, verification, evidence request and decision
+   is written to an append-only audit trail.
 
-The UI preserves the Stitch design system with:
-- **Color Palette**: Navy/slate shell, light canvas workspace, primary blue (#004ac6), secondary teal (#006a61)
-- **Typography**: Plus Jakarta Sans (headlines), Inter (UI), JetBrains Mono (hashes/timestamps)
-- **Components**: Enterprise-grade cards, tables, split-pane inspectors, forensic overlays
-- **Layout**: Persistent sidebar, dense data tables, audit trails
+## Features
+
+- **Authentication & RBAC** — registration, login, JWT sessions, and
+  admin / reviewer / applicant scoping enforced on every protected endpoint.
+- **Application lifecycle** — create, search, filter, paginate, submit, review,
+  request more information, approve or reject, with full status history.
+- **Document upload** — PDF/PNG/JPEG validation, SHA-256 fingerprinting, duplicate
+  detection, and deletion only while an application is editable.
+- **Document authentication** — recomputes the SHA-256 digest and compares it with the
+  recorded fingerprint, reporting clearly when a file is no longer available instead of
+  guessing.
+- **Compliance rules engine** — seeded statutory rules, on-demand evaluation, findings
+  with severity and history, plus reviewer dispositions.
+- **Evidence requests** — reviewers request missing evidence; applicants respond in-app.
+- **Audit history** — append-only log with entity, actor, action, timestamp and state.
+- **Reports & analytics** — portfolio summary, status/category distributions, monthly
+  volume and approval rate, all computed from the database.
 
 ## Tech Stack
 
 ### Frontend
-- React 18 + TypeScript
-- Vite
-- Tailwind CSS
-- React Router DOM
+- React 19 + TypeScript
+- Vite 8
+- Tailwind CSS 3
+- React Router 7
 - Axios
-- TanStack Query
 
 ### Backend
-- FastAPI (Python)
-- SQLAlchemy 2.x + Alembic
-- PostgreSQL
-- Pydantic v2
-- JWT Authentication
-- PyMuPDF, pytesseract (OCR), Pillow, OpenCV
-- ReportLab (PDF reports)
+- FastAPI + Pydantic v2
+- SQLAlchemy 2.x
+- PostgreSQL (via `psycopg2`) with an automatic **SQLite fallback**
+- JWT authentication, bcrypt password hashing
+- PyMuPDF / Pillow for document handling
 
 ### Infrastructure
-- Docker Compose (PostgreSQL)
+- Neon (PostgreSQL), Render (API), Vercel (frontend)
+- Docker Compose for local PostgreSQL
 - Free and open-source dependencies only
 
-## Features
+## Architecture
 
-- **Authentication & RBAC**: Registration, login, role-based access (Admin, Reviewer, Applicant)
-- **Application Management**: Create, track, and manage applications with state machine workflow
-- **Document Upload**: Secure upload with file validation, SHA-256 hashing, duplicate detection
-- **Document Intelligence**: OCR/extraction pipeline with field review and correction
-- **Document Authentication**: Forensic checks (hash integrity, metadata, QR, signatures) with honest status reporting
-- **Compliance Rules Engine**: Versioned rules with findings and human review
-- **Evidence Requests**: Request additional info with audit trail
-- **Audit History**: Append-only audit log of all critical actions
-- **Reports & Analytics**: Real database-driven metrics with CSV/PDF export
-
-## Prerequisites
-
-- Node.js 18+ and npm
-- Python 3.10+
-- PostgreSQL 14+ (or use Docker)
-- Tesseract OCR (for scanned documents)
-
-### Installing Tesseract OCR
-
-**Windows:**
-1. Download from [UB Mannheim Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
-2. Install and note the path (e.g., `C:\Program Files\Tesseract-OCR\tesseract.exe`)
-3. Add to PATH or set `TESSERACT_CMD` in .env
-
-**Linux (Ubuntu/Debian):**
-```bash
-sudo apt install tesseract-ocr libtesseract-dev
+```
+frontend/  React SPA
+   │  /api/*  (same-origin proxy via frontend/vercel.json)
+   ▼
+backend/   FastAPI
+   │  SQLAlchemy
+   ▼
+PostgreSQL (Neon)  ──fallback──▶  SQLite (backend/verisure.db)
 ```
 
-**macOS:**
-```bash
-brew install tesseract
-```
+The Vercel deployment rewrites `/api/*` and `/uploads/*` to the Render backend, so no
+build-time API URL is required and there are no cross-origin issues. Unknown paths are
+rewritten to `index.html` so deep links survive a refresh.
 
-## Setup Instructions
+## Local Development
 
-### 1. Clone and setup environment
+### Prerequisites
+- Node.js 18+
+- Python 3.10+ (3.11 recommended)
+- Optional: Docker for PostgreSQL, or just let the app use SQLite
 
-```bash
-cd verisure
-cp backend/.env.example backend/.env
-# Edit backend/.env with your configuration
-```
-
-### 2. Database Setup (Option A: Docker)
-
-```bash
-docker-compose up -d db
-```
-
-### 2. Database Setup (Option B: Local PostgreSQL)
-
-Create database and user:
-```sql
-CREATE USER verisure_user WITH PASSWORD 'verisure_pass';
-CREATE DATABASE verisure_db OWNER verisure_user;
-```
-
-### 3. Backend Setup
+### Backend
 
 ```bash
 cd backend
 python -m venv venv
-# Windows
-venv\Scripts\activate
-# Linux/Mac
-# source venv/bin/activate
-
+# Windows: venv\Scripts\activate
+# Linux/macOS: source venv/bin/activate
 pip install -r requirements.txt
 
-# Run migrations
-alembic upgrade head
+# Optional: point at PostgreSQL. If omitted, SQLite is used automatically.
+export DATABASE_URL="postgresql://user:pass@host:5432/db?sslmode=require"
+export ADMIN_PASSWORD="change-this-password"
 
-# Create admin user (bootstrap)
-# Use the admin credentials from .env or create via API
-python -c "
-# Quick bootstrap script
-from app.core.database import SessionLocal
-from app.models.user import User, UserRole
-from app.core.security import get_password_hash
-
-db = SessionLocal()
-admin = db.query(User).filter(User.email='admin@verisure.local').first()
-if not admin:
-    admin = User(
-        email='admin@verisure.local',
-        password_hash=get_password_hash('change-this-password'),
-        full_name='System Administrator',
-        role=UserRole.ADMIN,
-        is_active=True,
-        is_verified=True
-    )
-    db.add(admin)
-    db.commit()
-    print('Admin created')
-else:
-    print('Admin exists')
-db.close()
-"
-
-# Start backend
-python run.py
-# or: uvicorn app.main:app --reload
+uvicorn app.main:app --reload --port 8000
 ```
 
-Backend will be available at http://localhost:8000
-API docs at http://localhost:8000/api/docs
+On startup the backend creates any missing tables and seeds the default compliance
+rules and administrator account. There are no migration steps to run: the
+`alembic/versions/` directory is intentionally empty, and `alembic upgrade head` is a
+no-op. See `backend/create_tables.py` to create the schema explicitly.
 
-### 4. Frontend Setup
+API: http://localhost:8000 · Docs: http://localhost:8000/api/docs
+
+### Frontend
 
 ```bash
 cd frontend
@@ -157,80 +122,95 @@ npm install
 npm run dev
 ```
 
-Frontend will be available at http://localhost:5173
+Frontend: http://localhost:5173
 
-## Default Credentials
+By default the frontend calls `/api/v1` on its own origin. For local development
+against a separate backend, set `VITE_API_BASE_URL=http://127.0.0.1:8000`.
 
-After bootstrap, use:
-- Email: `admin@verisure.local`
-- Password: `change-this-password` (change immediately in production)
+## Demo accounts
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Administrator | `admin@verisure.local` | value of `ADMIN_PASSWORD` (default `change-this-password`) |
+| Applicant | register from `/register` | — |
+
+If `ADMIN_PASSWORD` is set to a non-default value, the startup hook updates the
+administrator password automatically, so it can be rotated without database access.
+
+## Database behaviour
+
+The backend prefers PostgreSQL and falls back to SQLite if `DATABASE_URL` is missing or
+unreachable, so the service always starts. The fallback is logged loudly and reported by
+`GET /api/health/db` (`"is_fallback": true`). SQLite data does not survive a redeploy.
+
+```
+GET /api/health          # liveness
+GET /api/health/db       # active backend, table count, last connection error
+```
+
+## Testing
+
+```bash
+cd backend
+
+# In-process API test (TestClient)
+python smoke_test.py
+
+# Live HTTP test against a running server; override the target with TEST_BASE
+python live_test.py
+```
+
+Both suites exercise the complete workflow: registration, application creation,
+document upload and verification, submission, compliance evaluation, evidence
+requests and reviewer decisions.
 
 ## Project Structure
 
 ```
 verisure/
-├── frontend/          # React + Vite + Tailwind
-├── backend/           # FastAPI + SQLAlchemy
-├── docker-compose.yml # PostgreSQL setup
-├── stitch_verisure_ai_compliance_platform/ # Original designs (reference)
-└── README.md
+├── frontend/                  # React + Vite + Tailwind SPA
+│   ├── src/pages/             # Landing, dashboard, registry, detail, compliance, ...
+│   ├── src/components/        # UI primitives and app shell
+│   ├── src/lib/api.ts         # API client and formatting helpers
+│   └── vercel.json            # API proxy + SPA fallback
+├── backend/
+│   ├── app/api/v1/endpoints/  # auth, applications, documents, compliance, ...
+│   ├── app/models/            # SQLAlchemy models (dialect-agnostic)
+│   ├── app/core/              # config, database, security
+│   ├── smoke_test.py          # in-process test suite
+│   ├── live_test.py           # live HTTP test suite
+│   └── create_tables.py       # explicit schema creation
+├── render.yaml                # Render blueprint
+├── docker-compose.yml         # Local PostgreSQL
+└── DEPLOYMENT_STATUS.md       # Live verification and remaining configuration
 ```
 
 ## Security Notes
 
-- All uploaded files stored outside web root
-- SHA-256 hashing for integrity
-- Server-side authorization on all protected endpoints
-- Passwords hashed with bcrypt
-- JWT tokens for authentication
-- CORS restricted to configured origins
-- No secrets in source code - use .env
-- Audit logging for critical actions
-- Path traversal protection
-
-## Development
-
-### Running Tests (Backend)
-```bash
-cd backend
-pytest
-```
-
-### Building Frontend
-```bash
-cd frontend
-npm run build
-```
-
-### Linting/Type Checking
-```bash
-cd frontend
-npm run lint
-npx tsc --noEmit
-```
+- All uploaded files are stored outside the web root.
+- SHA-256 hashing provides tamper evidence for documents.
+- Server-side authorization is enforced on every protected endpoint; applicants cannot
+  alter review outcomes, and document deletion is blocked after submission.
+- Passwords are hashed with bcrypt; JWTs are used for sessions.
+- CORS is restricted to configured origins plus Vercel deployment domains.
+- No secrets are committed — configuration comes from environment variables.
+- Critical actions are written to the audit log.
 
 ## Important Notes
 
-- **No fake data**: The application starts with empty database. No placeholder/sample records are shown as real data.
-- **Honest verification**: If verification capabilities aren't configured/available, the system reports "Unable to Verify" rather than guessing.
-- **Human oversight**: Compliance decisions require human review. AI/extraction assists but doesn't make final regulatory decisions.
-- **Free & Open Source**: All dependencies are free and open source. No paid APIs required for core functionality.
+- **No fake data** — the application starts empty; no sample records are presented as real.
+- **Honest verification** — when a capability or file is unavailable, the UI says so
+  rather than reporting a false success.
+- **Human oversight** — compliance findings assist review; a person records the decision.
+- **Free & open source** — no paid APIs are required for core functionality.
 
-## Troubleshooting
+## Known Limitations
 
-### Tesseract not found
-- Install Tesseract OCR and set `TESSERACT_CMD` in .env to full path
-- On Windows, default is usually `C:\Program Files\Tesseract-OCR\tesseract.exe`
-
-### Database connection errors
-- Ensure PostgreSQL is running
-- Check DATABASE_URL in .env
-- For Docker: `docker-compose up -d db`
-
-### Port conflicts
-- Backend: change port in run.py or use `uvicorn app.main:app --port 8001`
-- Frontend: Vite will auto-select next available port
+- Uploaded files are ephemeral on Render's free tier and may be lost on restart.
+- OCR/deskew is disabled because Tesseract is not available on the free tier.
+- The Render free instance sleeps after inactivity; the first request may take ~30–50 s.
+- Email delivery is not configured; notifications are in-app only.
 
 ## License
 
-This project is built for educational and evaluation purposes.
+Built for educational and evaluation purposes.
