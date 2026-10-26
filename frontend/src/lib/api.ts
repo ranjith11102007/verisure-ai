@@ -3,7 +3,7 @@ import axios from 'axios'
 // Use a same-origin relative path by default. The Vercel deployment proxies
 // /api/* to the backend (see frontend/vercel.json), so no build-time env var
 // is required. VITE_API_BASE_URL can still override it for other hosts.
-const RAW_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '')
+export const RAW_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '')
 
 const api = axios.create({
   baseURL: `${RAW_BASE_URL}/api/v1`,

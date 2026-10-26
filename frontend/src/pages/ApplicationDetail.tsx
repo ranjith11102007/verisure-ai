@@ -10,6 +10,7 @@ import {
   getApiError,
   formatDate,
   formatBytes,
+  RAW_BASE_URL,
 } from '../lib/api'
 import {
   Card,
@@ -375,7 +376,17 @@ export default function ApplicationDetail() {
                         </td>
                         <td className="px-3 py-3 text-xs text-on-surface-variant">{formatDate(d.uploaded_at)}</td>
                         <td className="px-3 py-3 text-right whitespace-nowrap">
-                          <Link to="/document-auth" className="text-primary hover:underline text-xs mr-3">
+                          {d.stored_filename && (
+                            <a
+                              href={`${RAW_BASE_URL}/uploads/documents/${encodeURIComponent(d.stored_filename)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline text-xs mr-3"
+                            >
+                              Open
+                            </a>
+                          )}
+                          <Link to={`/document-auth?doc=${encodeURIComponent(d.id)}`} className="text-primary hover:underline text-xs mr-3">
                             Verify
                           </Link>
                           {canEditDocs && (

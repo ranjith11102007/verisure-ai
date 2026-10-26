@@ -1,13 +1,17 @@
-﻿import { useEffect, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { documentsApi, getApiError, formatBytes, formatDate } from '../lib/api'
 import { Card, EmptyState, ErrorBanner, PageHeader, PrimaryButton, StatusBadge } from '../components/ui'
 
 export default function DocumentAuth() {
+  const [searchParams] = useSearchParams()
+  const autoDocId = searchParams.get('doc')
   const [documents, setDocuments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [verifying, setVerifying] = useState<string | null>(null)
   const [results, setResults] = useState<Record<string, any>>({})
+  const autoVerifiedRef = useRef<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'verified' | 'flagged' | 'unavailable'>('all')
 
   const load = async () => {
@@ -26,6 +30,16 @@ export default function DocumentAuth() {
   useEffect(() => {
     load()
   }, [])
+
+  useEffect(() => {
+    if (!autoDocId || loading) return
+    if (autoVerifiedRef.current === autoDocId) return
+    const target = documents.find((d) => d.id === autoDocId)
+    if (!target) return
+    if (results[autoDocId] || verifying === autoDocId) return
+    autoVerifiedRef.current = autoDocId
+    verify(autoDocId)
+  }, [autoDocId, documents, loading, results, verifying])
 
   const verify = async (id: string) => {
     setVerifying(id)
